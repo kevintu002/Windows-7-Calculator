@@ -10,26 +10,26 @@ export default function Calculator() {
   const [isOperandReady, setIsOperandReady] = useState(false); // flag for reporting operand
 
   const handleBackspace = () => {
-    if (lowerVal != '0') {
+    if (lowerVal !== '0') {
       setLowerVal((prev) => (
-        prev.length == 1 ? '0' : prev.slice(0, -1)
+        prev.length === 1 ? '0' : prev.slice(0, -1)
       ))
     }
   }
 
-  const handleClear = ({target}) => {
+  const handleClear = () => {
     setUpperVal(null)
     setLowerVal('0')
     setOperator(null)
     setIsOperandReady(false)
   }
 
-  const handleClearEntry = ({target}) => {
+  const handleClearEntry = () => {
     setLowerVal('0')
   }
 
   const handleOperation = () => ({target}) => {
-    console.log(target.name)
+    // console.log(target.name)
     if (upperVal == null) { // empty upper, so left and operator
       setUpperVal(lowerVal + target.name)
       setOperator(target.name)
@@ -39,7 +39,9 @@ export default function Calculator() {
   }
 
   const handleDot = ({target}) => {
-    
+    if (!lowerVal.includes('.')) {
+      setLowerVal((prev) => (prev + '.'))
+    }
   }
 
   const handleDigit = () => ({target}) => {
@@ -60,7 +62,7 @@ export default function Calculator() {
       <div className="keyboard">
       </div>
       <div className="keyboard-bot">
-        <CalcKey name="&#9664;--" onClick={handleBackspace}/><CalcKey name="CE" onClick={handleClearEntry}/><CalcKey name="C" onClick={handleClear}/><CalcKey name="±"/><CalcKey name="√"/><br/>
+        <CalcKey name="Del" onClick={handleBackspace}/><CalcKey name="CE" onClick={handleClearEntry}/><CalcKey name="C" onClick={handleClear}/><CalcKey name="±"/><CalcKey name="√"/><br/>
         <CalcKey name="7" onClick={handleDigit()}/><CalcKey name="8" onClick={handleDigit()}/><CalcKey name="9" onClick={handleDigit()}/><CalcKey name="/" onClick={handleOperation()}/><CalcKey name="%" onClick={handleOperation()}/><br/>
         <CalcKey name="4" onClick={handleDigit()}/><CalcKey name="5" onClick={handleDigit()}/><CalcKey name="6" onClick={handleDigit()}/><CalcKey name="*" onClick={handleOperation()}/><CalcKey name="1/x"/><br/>
         <CalcKey name="1" onClick={handleDigit()}/><CalcKey name="2" onClick={handleDigit()}/><CalcKey name="3" onClick={handleDigit()}/><CalcKey name="-" onClick={handleOperation()}/><br/>
