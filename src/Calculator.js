@@ -10,7 +10,11 @@ export default function Calculator() {
   const [isOperandReady, setIsOperandReady] = useState(false); // flag for reporting operand
 
   const handleBackspace = () => {
-
+    if (lowerVal != '0') {
+      setLowerVal((prev) => (
+        prev.length == 1 ? '0' : prev.slice(0, -1)
+      ))
+    }
   }
 
   const handleClear = ({target}) => {
@@ -43,9 +47,7 @@ export default function Calculator() {
       setIsOperandReady(false)
     } else {
       setLowerVal((prev) => (
-        prev === '0' // curr displayValue is 0?
-          ? target.name // set to inputDigit
-          : prev + target.name // append digit
+        prev === '0' ? target.name : prev + target.name
       ));
     }
   }
