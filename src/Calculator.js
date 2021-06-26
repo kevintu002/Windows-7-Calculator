@@ -30,6 +30,7 @@ export default function Calculator() {
   }
 
   const handleClearEntry = () => {
+    console.log("asdfasdf:" + expression)
     setLowerVal('0')
     setPrevKey('CE')
   }
@@ -57,6 +58,9 @@ export default function Calculator() {
           return [...prev, lowerVal, operator]
       })
     }
+    console.log("here@")
+    console.log('prevKey: ' + prevKey)
+
     setPrevKey(operator)
   }
 
@@ -95,27 +99,18 @@ export default function Calculator() {
   }, [isReadyForResult, expression])
 
   const handleEqual = () => () => {
-    // console.log('expression2: ' + expression)
+    console.log('expression2: ' + expression)
+    // console.log('prevKey: ' + prevKey)
 
     if (!operRegEx.test(expression)) {
       setExpression([lowerVal])
     } else {
-      if (prevKey === '=') {
-        if (expression.length < 2) { // expression is the current lowerVal
-          setExpression([lowerVal])
-        } else { // repeat last operator and operand
-          setExpression((prev) => {
-            return [...prev, prev.slice(-2)[0], prev.slice(-1)[0]]
-          })
-        }
-      } else if (prevKey === 'CE') {
-        if (expression.length < 2) {
-          setExpression([lowerVal])
-        } else { // use last operator and operand on curr lowerVal
-          setExpression((prev) => {
-            return [lowerVal, prev.slice(-2)[0], prev.slice(-1)[0]]
-          })
-        }
+      if (prevKey === '=') {// repeat last operator and operand
+        setExpression((prev) => [...prev, prev.slice(-2)[0], prev.slice(-1)[0]])
+      } else if (prevKey === 'CE') { // use last operator and operand on curr lowerVal
+        setExpression((prev) => [lowerVal, prev.slice(-2)[0], prev.slice(-1)[0]])
+        console.log("here")
+
       } else { // just append
         setExpression((prev) => ([...prev, lowerVal]))
       }
