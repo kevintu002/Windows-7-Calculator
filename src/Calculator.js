@@ -41,29 +41,17 @@ export default function Calculator() {
 
   const handleOperator = () => ({target}) => {
     setWasEqual(false)
-    // setLowerVal('0')
-    // console.log(target.name)
-
-    console.log(prevKey)
     
-    const regex = new RegExp('\\+|-|\\*|\\/|%');
-    console.log(prevKey.match(regex))
-    console.log(regex.test(prevKey))
-    if (regex.test(prevKey)) {
-      
+    // replace operator if prevKey was an operator
+    if (new RegExp('\\+|-|\\*|\\/|%').test(prevKey)) {
       setExpression((prev) => {
-        const prevOperator = prev[-1]
-        return (prev.pop, prevOperator)
+        return [...prev.pop(), target.name]
       })
-    } else {
+    } else if (prevKey === '.') {
+      setLowerVal((prev) => prev.slice(0, -1))
+      setExpression((prev) => [...prev, lowerVal.slice(0, -1), target.name])
+    } else { // append lowerVal and operator
       setExpression((prev) => [...prev, lowerVal, target.name])
-    }
-
-    if (isReadyForOperation) { // empty expression, so left and operator
-      
-      
-    } else {
-      // setExpression((prev) => prev + )
     }
     setPrevKey(target.name)
   }
