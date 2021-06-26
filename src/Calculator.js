@@ -34,6 +34,7 @@ export default function Calculator() {
   const handleClearEntry = () => {
     setLowerVal('0')
     setWasEqual(false)
+    // setPrevKey('+')
     setPrevKey(null)
     // setIsReadyForOperation(true)
     // setIsReadyForOperand(false)
@@ -43,11 +44,14 @@ export default function Calculator() {
     setWasEqual(false)
     
     // replace operator if prevKey was an operator
-    if (new RegExp('\\+|-|\\*|\\/|%').test(prevKey)) {
+    const regex = new RegExp('\\+|-|\\*|\\/|%');
+    if (regex.test(prevKey)) {
       setExpression((prev) => {
-        return [...prev.pop(), target.name]
+        if (regex.test(prev.slice(-1))) 
+          prev.pop()
+        return [...prev, target.name]
       })
-    } else if (prevKey === '.') {
+    } else if (prevKey === '.') { // edge case for dot input
       setLowerVal((prev) => prev.slice(0, -1))
       setExpression((prev) => [...prev, lowerVal.slice(0, -1), target.name])
     } else { // append lowerVal and operator
