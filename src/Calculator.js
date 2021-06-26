@@ -7,11 +7,9 @@ import { evaluate } from 'mathjs';
 export default function Calculator() {
   const [expression, setExpression] = useState([]);
   const [lowerVal, setLowerVal] = useState('0'); // input state
-  // const [operator, setOperator] = useState(null);
-  const [isReadyForOperation, setIsReadyForOperation] = useState(true);
   const [isReadyForOperand, setIsReadyForOperand] = useState(false);
-  const [wasEqual, setWasEqual] = useState(false);
   const [prevKey, setPrevKey] = useState(null);
+  const opsRegexp = new RegExp('\\+|-|\\*|\\/|%');
 
   const handleDelete = () => {
     if (lowerVal !== '0') {
@@ -24,43 +22,36 @@ export default function Calculator() {
   const handleClear = () => {
     setExpression([])
     setLowerVal('0')
-    // setOperator(null)
-    setIsReadyForOperation(true)
     setIsReadyForOperand(false)
-    setWasEqual(false)
     setPrevKey(null)
   }
 
   const handleClearEntry = () => {
     setLowerVal('0')
-    setWasEqual(false)
-    // setPrevKey('+')
     setPrevKey(null)
-    // setIsReadyForOperation(true)
-    // setIsReadyForOperand(false)
   }
 
   const handleOperator = () => ({target}) => {
-    setWasEqual(false)
-    
-    // replace operator if prevKey was an operator
-    const regex = new RegExp('\\+|-|\\*|\\/|%');
-    if (regex.test(prevKey)) {
+    // if prevKey was an operator, replace operator
+    if (opsRegexp.test(prevKey)) {
+      // edge case: operator, dot, equal
       setExpression((prev) => {
-        if (regex.test(prev.slice(-1))) 
+        if (opsRegexp.test(prev.slice(-1))) 
           prev.pop()
         return [...prev, target.name]
       })
-    } else if (prevKey === '.') { // edge case for dot input
+    // edge case for dot input
+    } else if (prevKey === '.') {
       setLowerVal((prev) => prev.slice(0, -1))
       setExpression((prev) => [...prev, lowerVal.slice(0, -1), target.name])
-    } else { // append lowerVal and operator
+    // otherwise, append lowerVal and operator to the expression
+    } else {
       setExpression((prev) => [...prev, lowerVal, target.name])
     }
     setPrevKey(target.name)
   }
 
-  const handleDot = ({target}) => {
+  const handleDot = () => {
     if (!lowerVal.includes('.')) {
       setLowerVal((prev) => (prev + '.'))
     }
@@ -68,39 +59,41 @@ export default function Calculator() {
   }
 
   const handleDigit = () => ({target}) => {
-    setLowerVal((prev) => (
-      prev === '0' ? target.name : prev + target.name
-    ));
+    // if prevKey was an operator, then next input should overwrite lowerVal
+    if (opsRegexp.test(prevKey)) {
+      setLowerVal(target.name)
+    // otherwise, if 0, then overwrite otherwise append
+    } else {
+      setLowerVal((prev) => (
+        prev === '0' ? target.name : prev + target.name
+      ));
+    }
     setPrevKey(target.name)
   }
 
   useEffect(() => {
+    // rerenders the display and evaluates the expression when = is pressed
     if (isReadyForOperand) {
       console.log(expression)
-      setLowerVal(evaluate(expression.join('')) + '')
+      setLowerVal(evaluate(expression.join('')))
       setIsReadyForOperand(false)
-      setWasEqual(true)
       setPrevKey('=')
     }
   }, [isReadyForOperand, expression])
 
-  const handleEqual = () => ({target}) => {
-    // console.log('expression: ' + expression)
-    if (prevKey !== '=') {
-      setExpression((prev) => (
-        [...prev, lowerVal]
-      ))
-      setIsReadyForOperand(true)
-    } else {
+  const handleEqual = () => () => {
+    // repeat last expression if previous input was equals
+    if (prevKey === '=') {
       setExpression((prev) => {
         const [a] = prev.slice(-1), [b] = prev.slice(-2)
         return [...prev, b, a]
-      }
-        
-      )
-      setIsReadyForOperand(true)
+      })
+    // otherwise just append
+    } else {
+      setExpression((prev) => ([...prev, lowerVal]))
     }
 
+    setIsReadyForOperand(true)
     setPrevKey('=')
   }
 
