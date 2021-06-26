@@ -6,12 +6,12 @@ import { evaluate } from 'mathjs';
 
 export default function Calculator() {
   const [expression, setExpression] = useState([]);
-  // const [upperVal, setUpperVal] = useState(null); // display of expression
   const [lowerVal, setLowerVal] = useState('0'); // input state
-  const [operator, setOperator] = useState(null);
+  // const [operator, setOperator] = useState(null);
   const [isReadyForOperation, setIsReadyForOperation] = useState(true);
   const [isReadyForOperand, setIsReadyForOperand] = useState(false);
-  const [hasPressedEqual, setHasPressedEqual] = useState(false);
+  const [wasEqual, setWasEqual] = useState(false);
+  const [prevKey, setPrevKey] = useState(null);
 
   const handleDelete = () => {
     if (lowerVal !== '0') {
@@ -23,56 +23,63 @@ export default function Calculator() {
 
   const handleClear = () => {
     setExpression([])
-    // setUpperVal(null)
     setLowerVal('0')
-    setOperator(null)
+    // setOperator(null)
     setIsReadyForOperation(true)
     setIsReadyForOperand(false)
-    setHasPressedEqual(false)
+    setWasEqual(false)
+    setPrevKey(null)
   }
 
   const handleClearEntry = () => {
     setLowerVal('0')
+    setWasEqual(false)
+    setPrevKey(null)
+    // setIsReadyForOperation(true)
+    // setIsReadyForOperand(false)
   }
 
-  const stringToOperation =  {
-    '+': (x, y) => x + y,
-    '-': (x, y) => x - y,
-    '*': (x, y) => x * y,
-    '/': (x, y) => x / y,
-    '%': (x, y) => x % y,
-    '1/x': (x) => 1 / x,
-    '√': (x) => Math.sqrt(x)
-  }
-
-  const handleOperation = () => ({target}) => {
+  const handleOperator = () => ({target}) => {
+    setWasEqual(false)
     // setLowerVal('0')
     // console.log(target.name)
+
+    console.log(prevKey)
     
-    setExpression((prev) => [...prev, lowerVal, target.name])
-    // setOperator(target.name)
+    const regex = new RegExp('\\+|-|\\*|\\/|%');
+    console.log(prevKey.match(regex))
+    console.log(regex.test(prevKey))
+    if (regex.test(prevKey)) {
+      
+      setExpression((prev) => {
+        const prevOperator = prev[-1]
+        return (prev.pop, prevOperator)
+      })
+    } else {
+      setExpression((prev) => [...prev, lowerVal, target.name])
+    }
 
     if (isReadyForOperation) { // empty expression, so left and operator
-      // setUpperVal(lowerVal + target.name)
-      
       
       
     } else {
       // setExpression((prev) => prev + )
-      // setUpperVal((prev) => (prev + lowerVal + target.name))
     }
+    setPrevKey(target.name)
   }
 
-  const handleDot = () => {
+  const handleDot = ({target}) => {
     if (!lowerVal.includes('.')) {
       setLowerVal((prev) => (prev + '.'))
     }
+    setPrevKey('.')
   }
 
   const handleDigit = () => ({target}) => {
     setLowerVal((prev) => (
       prev === '0' ? target.name : prev + target.name
     ));
+    setPrevKey(target.name)
   }
 
   useEffect(() => {
@@ -80,13 +87,14 @@ export default function Calculator() {
       console.log(expression)
       setLowerVal(evaluate(expression.join('')) + '')
       setIsReadyForOperand(false)
-      setHasPressedEqual(true)
+      setWasEqual(true)
+      setPrevKey('=')
     }
   }, [isReadyForOperand, expression])
 
   const handleEqual = () => ({target}) => {
     // console.log('expression: ' + expression)
-    if (!hasPressedEqual) {
+    if (prevKey !== '=') {
       setExpression((prev) => (
         [...prev, lowerVal]
       ))
@@ -100,14 +108,8 @@ export default function Calculator() {
       )
       setIsReadyForOperand(true)
     }
-    // setLowerVal(evaluate(expression.join('')) + '')
-    
-    
-    // console.log(upperVal.split('+'))
-    // setLowerVal(upperVal)
-    // console.log('upperVal + lowerVal: ' + upperVal + ' ' + lowerVal)
-    // console.log(eval(upperVal + ' ' + lowerVal))
-    // setLowerVal(eval(upperVal + ' ' + lowerVal))
+
+    setPrevKey('=')
   }
 
   return (
@@ -118,11 +120,11 @@ export default function Calculator() {
       <div className="keyboard">
       </div>
       <div className="keyboard-bot">
-        <CalcKey name="Del" onClick={handleDelete}/><CalcKey name="CE" onClick={handleClearEntry}/><CalcKey name="C" onClick={handleClear}/><CalcKey name="±"/><CalcKey name="√" onClick={handleOperation()}/><br/>
-        <CalcKey name="7" onClick={handleDigit()}/><CalcKey name="8" onClick={handleDigit()}/><CalcKey name="9" onClick={handleDigit()}/><CalcKey name="/" onClick={handleOperation()}/><CalcKey name="%" onClick={handleOperation()}/><br/>
-        <CalcKey name="4" onClick={handleDigit()}/><CalcKey name="5" onClick={handleDigit()}/><CalcKey name="6" onClick={handleDigit()}/><CalcKey name="*" onClick={handleOperation()}/><CalcKey name="1/x" onClick={handleOperation()}/><br/>
-        <CalcKey name="1" onClick={handleDigit()}/><CalcKey name="2" onClick={handleDigit()}/><CalcKey name="3" onClick={handleDigit()}/><CalcKey name="-" onClick={handleOperation()}/><br/>
-        <CalcKey name="0" onClick={handleDigit()}/><CalcKey name="." onClick={handleDot}/><CalcKey name="+" onClick={handleOperation()}/><CalcKey name="=" onClick={handleEqual()}/>
+        <CalcKey name="Del" onClick={handleDelete}/><CalcKey name="CE" onClick={handleClearEntry}/><CalcKey name="C" onClick={handleClear}/><CalcKey name="±"/><CalcKey name="√" onClick={handleOperator()}/><br/>
+        <CalcKey name="7" onClick={handleDigit()}/><CalcKey name="8" onClick={handleDigit()}/><CalcKey name="9" onClick={handleDigit()}/><CalcKey name="/" onClick={handleOperator()}/><CalcKey name="%" onClick={handleOperator()}/><br/>
+        <CalcKey name="4" onClick={handleDigit()}/><CalcKey name="5" onClick={handleDigit()}/><CalcKey name="6" onClick={handleDigit()}/><CalcKey name="*" onClick={handleOperator()}/><CalcKey name="1/x" onClick={handleOperator()}/><br/>
+        <CalcKey name="1" onClick={handleDigit()}/><CalcKey name="2" onClick={handleDigit()}/><CalcKey name="3" onClick={handleDigit()}/><CalcKey name="-" onClick={handleOperator()}/><br/>
+        <CalcKey name="0" onClick={handleDigit()}/><CalcKey name="." onClick={handleDot}/><CalcKey name="+" onClick={handleOperator()}/><CalcKey name="=" onClick={handleEqual()}/>
       </div>
     </div>
   );
