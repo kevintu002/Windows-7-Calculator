@@ -7,22 +7,24 @@ import { evaluate } from 'mathjs';
 export default function Calculator() {
   const [expression, setExpression] = useState([]);
   const [lowerVal, setLowerVal] = useState('0'); // input state
-  const [isReadyForOperand, setIsReadyForOperand] = useState(false);
+  const [isReadyForResult, setIsReadyForResult] = useState(false);
   const [prevKey, setPrevKey] = useState(null);
-  const opsRegexp = new RegExp('\\+|-|\\*|\\/|%');
+  const operRegEx = new RegExp('\\+|-|\\*|\\/|%');
 
   const handleDelete = () => {
-    if (lowerVal !== '0') {
-      setLowerVal((prev) => (
-        prev.length === 1 ? '0' : prev.slice(0, -1)
-      ))
+    if (lowerVal != '0') {
+      setLowerVal((prev) => {
+        console.log("lowerVal: " + lowerVal)
+        console.log("prev.length: " + prev.length)
+        return prev.length === 1 ? '0' : prev.slice(0, -1)
+      })
     }
   }
 
   const handleClear = () => {
     setExpression([])
     setLowerVal('0')
-    setIsReadyForOperand(false)
+    setIsReadyForResult(false)
     setPrevKey(null)
   }
 
@@ -33,10 +35,10 @@ export default function Calculator() {
 
   const handleOperator = () => ({target}) => {
     // if prevKey was an operator, replace operator
-    if (opsRegexp.test(prevKey)) {
+    if (operRegEx.test(prevKey)) {
       // edge case: operator, dot, equal
       setExpression((prev) => {
-        if (opsRegexp.test(prev.slice(-1))) 
+        if (operRegEx.test(prev.slice(-1))) 
           prev.pop()
         return [...prev, target.name]
       })
@@ -46,7 +48,11 @@ export default function Calculator() {
       setExpression((prev) => [...prev, lowerVal.slice(0, -1), target.name])
     // otherwise, append lowerVal and operator to the expression
     } else {
-      setExpression((prev) => [...prev, lowerVal, target.name])
+      setExpression((prev) => (
+        prevKey === '=' 
+        ? [...prev, target.name] 
+        : [...prev, lowerVal, target.name]
+      ))
     }
     setPrevKey(target.name)
   }
@@ -59,8 +65,10 @@ export default function Calculator() {
   }
 
   const handleDigit = () => ({target}) => {
+    // console.log(target.name, target.name + '')
+    // console.log("prevKey: " + prevKey)
     // if prevKey was an operator, then next input should overwrite lowerVal
-    if (opsRegexp.test(prevKey)) {
+    if (operRegEx.test(prevKey)) {
       setLowerVal(target.name)
     // otherwise, if 0, then overwrite otherwise append
     } else {
@@ -73,27 +81,32 @@ export default function Calculator() {
 
   useEffect(() => {
     // rerenders the display and evaluates the expression when = is pressed
-    if (isReadyForOperand) {
-      console.log(expression)
+    if (isReadyForResult) {
+      console.log('expression: ' + expression)
       setLowerVal(evaluate(expression.join('')))
-      setIsReadyForOperand(false)
+      setIsReadyForResult(false)
       setPrevKey('=')
     }
-  }, [isReadyForOperand, expression])
+  }, [isReadyForResult, expression])
 
   const handleEqual = () => () => {
+    // console.log('expression2: ' + expression)
     // repeat last expression if previous input was equals
-    if (prevKey === '=') {
+    if (prevKey === '=' && expression.length < 2) {
+      setExpression([lowerVal])
+    } else if (prevKey === '=') {
       setExpression((prev) => {
         const [a] = prev.slice(-1), [b] = prev.slice(-2)
-        return [...prev, b, a]
+        // if (!a && !b)
+          return [...prev, b, a]
+        // return prev
       })
     // otherwise just append
     } else {
       setExpression((prev) => ([...prev, lowerVal]))
     }
 
-    setIsReadyForOperand(true)
+    setIsReadyForResult(true)
     setPrevKey('=')
   }
 
@@ -105,9 +118,9 @@ export default function Calculator() {
       <div className="keyboard">
       </div>
       <div className="keyboard-bot">
-        <CalcKey name="Del" onClick={handleDelete}/><CalcKey name="CE" onClick={handleClearEntry}/><CalcKey name="C" onClick={handleClear}/><CalcKey name="±"/><CalcKey name="√" onClick={handleOperator()}/><br/>
+        <CalcKey name="Del" onClick={handleDelete}/><CalcKey name="CE" onClick={handleClearEntry}/><CalcKey name="C" onClick={handleClear}/><CalcKey name="±"/><CalcKey name="√" /><br/>
         <CalcKey name="7" onClick={handleDigit()}/><CalcKey name="8" onClick={handleDigit()}/><CalcKey name="9" onClick={handleDigit()}/><CalcKey name="/" onClick={handleOperator()}/><CalcKey name="%" onClick={handleOperator()}/><br/>
-        <CalcKey name="4" onClick={handleDigit()}/><CalcKey name="5" onClick={handleDigit()}/><CalcKey name="6" onClick={handleDigit()}/><CalcKey name="*" onClick={handleOperator()}/><CalcKey name="1/x" onClick={handleOperator()}/><br/>
+        <CalcKey name="4" onClick={handleDigit()}/><CalcKey name="5" onClick={handleDigit()}/><CalcKey name="6" onClick={handleDigit()}/><CalcKey name="*" onClick={handleOperator()}/><CalcKey name="1/x" /><br/>
         <CalcKey name="1" onClick={handleDigit()}/><CalcKey name="2" onClick={handleDigit()}/><CalcKey name="3" onClick={handleDigit()}/><CalcKey name="-" onClick={handleOperator()}/><br/>
         <CalcKey name="0" onClick={handleDigit()}/><CalcKey name="." onClick={handleDot}/><CalcKey name="+" onClick={handleOperator()}/><CalcKey name="=" onClick={handleEqual()}/>
       </div>
