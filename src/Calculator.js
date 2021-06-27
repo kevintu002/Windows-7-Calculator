@@ -20,17 +20,10 @@ export default function Calculator() {
   const [isReadyForResult, setIsReadyForResult] = useState(false)
   const operRegEx = new RegExp('\\+|-|\\*|\\/')
 
-  useEffect(() => {
-
-  }, [expression])
-
   const handleDelete = () => {
     if (prevKey !== '=' && lowerVal !== '0') {
-      setLowerVal((prev) => {
-        // console.log("lowerVal: " + lowerVal + ", typeof: " + typeof lowerVal)
-        // console.log("prev.length: " + prev.length + ", typeof: " + typeof prev.length)
-        return prev.length === 1 ? '0' : prev.slice(0, -1)
-      })
+      setLowerVal((prev) => prev.length === 1 ? '0' : prev.slice(0, -1))
+
       setPrevKey('del')
     }
   }
@@ -38,8 +31,8 @@ export default function Calculator() {
   const handleClear = () => {
     setExpression([])
     setLowerVal('0')
-    setIsReadyForResult(false)
     setPrevKey(null)
+    setIsReadyForResult(false)
   }
 
   const handleClearEntry = () => {
@@ -62,11 +55,12 @@ export default function Calculator() {
     } else if (prevKey === '=') {
       // append to existing expression
       setExpression((prev) => [...prev, newOperator])
-    } else if (prevKey === 'CE') {
+    } else if (prevKey === 'CE' && !operRegEx.test(expression)) {
       // new expression
-      setExpression((prev) => [lowerVal, newOperator])
+      setExpression((_) => [lowerVal, newOperator])
     } else {
-      // empty expression
+      // evaluate and display current expression with new operator
+      setLowerVal(evaluate([...expression, lowerVal].join('')) + '')
       setExpression((prev) => [...prev, lowerVal, newOperator])
     }
 
@@ -80,6 +74,7 @@ export default function Calculator() {
         setLowerVal('0.')
       else
         setLowerVal((prev) => prev + '.')
+      
       setPrevKey('.')
     }
   }
@@ -87,9 +82,11 @@ export default function Calculator() {
   const handleDigit = () => ({target}) => {
     const newDigit = target.name;
       
-    if (prevKey !== '=' && !operRegEx.test(prevKey)) { // overwrite 0. otherwise, append
+    if (prevKey !== '=' && !operRegEx.test(prevKey)) {
+      // overwrite 0. otherwise, append
       setLowerVal((prev) => prev === '0' ? newDigit : prev + newDigit)
-    } else { // next input overwrites lowerVal
+    } else {
+      // next input overwrites lowerVal
       if (prevKey === '=')
         setExpression([])
       setLowerVal(newDigit)

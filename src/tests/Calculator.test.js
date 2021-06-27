@@ -43,6 +43,11 @@ test('dot operator cases', () => {
   expect(expression.textContent).toBe('1.1+')
 
   clickButton('C')
+  clickButton('1');clickButton('+');clickButton('CE');clickButton('-')
+  expect(lowerVal.textContent).toBe('1')
+  expect(expression.textContent).toBe('1+0-')
+
+  clickButton('C')
   clickButton('1');clickButton('.');clickButton('1');clickButton('1')
   clickButton('.');clickButton('+')
   expect(lowerVal.textContent).toBe('1.11')
@@ -52,4 +57,10 @@ test('dot operator cases', () => {
   clickButton('+');clickButton('.');clickButton('=')
   expect(lowerVal.textContent).toBe('0')
   expect(expression.textContent).toBe('0+0')
+
+  clickButton('C')
+  clickButton('1');clickButton('+');clickButton('2');clickButton('=');clickButton('CE');clickButton('=')
+  expect(lowerVal.textContent).toBe('2')
+  expect(expression.textContent).toBe('0+2')
 })
+// 1=+
