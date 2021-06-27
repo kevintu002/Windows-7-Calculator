@@ -15,7 +15,6 @@ export default function Calculator() {
   const [result, setResult] = useState()
   const [lowerVal, setLowerVal] = useState('0')
   const [currState, setCurrState] = useState(states.FIRST_ARG)
-  const [oper, setOperator] = useState(null)
   const [prevKey, setPrevKey] = useState(null)
 
   const [isReadyForResult, setIsReadyForResult] = useState(false)
@@ -54,37 +53,32 @@ export default function Calculator() {
     
     // if prevKey was an operator, replace operator
     if (operRegEx.test(prevKey)) {
-      setOperator(operator)
+      setExpression((prev) => {
+        if (operRegEx.test(prev.slice(-1))) // edge case: operator, dot, equal
+          prev.pop()
+        return [...prev, operator]
+      })
+    } else if (prevKey === '.') {
+      setLowerVal((prev) => prev.slice(0, -1))
+      setExpression((prev) => [...prev, lowerVal.slice(0, -1), operator])
+    } else {
+      setExpression((prev) => {
+        if (prevKey === '=')
+          return [...prev, operator]
+        else if (prevKey === 'CE')
+          return [lowerVal, operator]
+        else
+          return [...prev, lowerVal, operator]
+      })
     }
-    // if (operRegEx.test(prevKey)) {
-    //   setExpression((prev) => { // edge case: operator, dot, equal
-    //     if (operRegEx.test(prev.slice(-1))) 
-    //       prev.pop()
-    //     return [...prev, operator]
-    //   })
-    // } else if (prevKey === '.') { // edge case for dot input
-    //   setLowerVal((prev) => prev.slice(0, -1))
-    //   setExpression((prev) => [...prev, lowerVal.slice(0, -1), operator])
-    // } else {
-    //   setExpression((prev) => {
-    //     if (prevKey === '=')
-    //       return [...prev, operator]
-    //     else if (prevKey === 'CE')
-    //       return [lowerVal, operator]
-    //     else
-    //       return [...prev, lowerVal, operator]
-    //   })
-    // }
-    // console.log("here@")
-    // console.log('prevKey: ' + prevKey)
 
-    setOperator(operator)
     setPrevKey(operator)
   }
 
   const handleDot = () => {
     if (!lowerVal.includes('.')) {
-      if (prevKey === '=' || operRegEx.test(prevKey) || expression.length === 0)
+      if (prevKey === '=' || operRegEx.test(prevKey) 
+      || (expression.length === 0 && lowerVal === '0'))
         setLowerVal('0.')
       else
         setLowerVal((prev) => prev + '.')
