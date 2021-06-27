@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import Calculator from './Calculator';
+import Calculator from '../Calculator';
 
 function getButton(val) {
   return screen.getByRole('button', {name: val})

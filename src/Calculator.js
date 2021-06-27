@@ -15,7 +15,7 @@ export default function Calculator() {
   const [result, setResult] = useState()
   const [lowerVal, setLowerVal] = useState('0')
   const [currState, setCurrState] = useState(states.FIRST_ARG)
-  const [operator, setOperator] = useState(null)
+  const [oper, setOperator] = useState(null)
   const [prevKey, setPrevKey] = useState(null)
 
   const [isReadyForResult, setIsReadyForResult] = useState(false)
@@ -26,16 +26,14 @@ export default function Calculator() {
   }, [expression])
 
   const handleDelete = () => {
-
-
-    // if (prevKey !== '=' && lowerVal !== '0') {
-    //   setLowerVal((prev) => {
-    //     // console.log("lowerVal: " + lowerVal + ", typeof: " + typeof lowerVal)
-    //     // console.log("prev.length: " + prev.length + ", typeof: " + typeof prev.length)
-    //     return prev.length === 1 ? '0' : prev.slice(0, -1)
-    //   })
-    // }
-    // setPrevKey('del')
+    if (prevKey !== '=' && lowerVal !== '0') {
+      setLowerVal((prev) => {
+        // console.log("lowerVal: " + lowerVal + ", typeof: " + typeof lowerVal)
+        // console.log("prev.length: " + prev.length + ", typeof: " + typeof prev.length)
+        return prev.length === 1 ? '0' : prev.slice(0, -1)
+      })
+    }
+    setPrevKey('del')
   }
 
   const handleClear = () => {
@@ -47,14 +45,17 @@ export default function Calculator() {
 
   const handleClearEntry = () => {
     // console.log("asdfasdf:" + expression)
-    // setLowerVal('0')
+    setLowerVal('0')
     setPrevKey('CE')
   }
 
   const handleOperator = () => ({target}) => {
     const operator = target.name
-
-    // // if prevKey was an operator, replace operator
+    
+    // if prevKey was an operator, replace operator
+    if (operRegEx.test(prevKey)) {
+      setOperator(operator)
+    }
     // if (operRegEx.test(prevKey)) {
     //   setExpression((prev) => { // edge case: operator, dot, equal
     //     if (operRegEx.test(prev.slice(-1))) 
@@ -77,6 +78,7 @@ export default function Calculator() {
     // console.log("here@")
     // console.log('prevKey: ' + prevKey)
 
+    setOperator(operator)
     setPrevKey(operator)
   }
 
