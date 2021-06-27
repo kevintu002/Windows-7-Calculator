@@ -98,6 +98,14 @@ export default function Calculator() {
     }
   }, [isReadyForResult, expression])
 
+  const getOperator = () =>{
+    return expression.slice(-2)[0]
+  }
+
+  const getOperand = () =>{
+    return expression.slice(-1)[0]
+  }
+
   const handleEqual = () => () => {
     console.log('expression2: ' + expression)
     // console.log('prevKey: ' + prevKey)
