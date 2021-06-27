@@ -30,16 +30,26 @@ test('dot operator cases', () => {
   const expression = screen.getByTestId('expression')
   const lowerVal = screen.getByTestId('lowerVal')
 
+  clickButton('1');clickButton('.');clickButton('+')
+  expect(lowerVal.textContent).toBe('1')
+  expect(expression.textContent).toBe('1+')
+
+  clickButton('C')
   clickButton('1');clickButton('.')
   expect(lowerVal.textContent).toBe('1.')
 
   clickButton('1');clickButton('.');clickButton('+')
-  expect(lowerVal.textContent).toBe('1')
-  expect(expression.textContent).toBe('1+')
+  expect(lowerVal.textContent).toBe('1.1')
+  expect(expression.textContent).toBe('1.1+')
 
   clickButton('C')
   clickButton('1');clickButton('.');clickButton('1');clickButton('1')
   clickButton('.');clickButton('+')
   expect(lowerVal.textContent).toBe('1.11')
   expect(expression.textContent).toBe('1.11+')
+
+  clickButton('C')
+  clickButton('+');clickButton('.');clickButton('=')
+  expect(lowerVal.textContent).toBe('0')
+  expect(expression.textContent).toBe('0+0')
 })

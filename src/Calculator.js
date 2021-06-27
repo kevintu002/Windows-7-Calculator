@@ -31,8 +31,8 @@ export default function Calculator() {
         // console.log("prev.length: " + prev.length + ", typeof: " + typeof prev.length)
         return prev.length === 1 ? '0' : prev.slice(0, -1)
       })
+      setPrevKey('del')
     }
-    setPrevKey('del')
   }
 
   const handleClear = () => {
@@ -49,30 +49,28 @@ export default function Calculator() {
   }
 
   const handleOperator = () => ({target}) => {
-    const operator = target.name
+    const newOperator = target.name
     
-    // if prevKey was an operator, replace operator
     if (operRegEx.test(prevKey)) {
-      setExpression((prev) => {
-        if (operRegEx.test(prev.slice(-1))) // edge case: operator, dot, equal
-          prev.pop()
-        return [...prev, operator]
-      })
+      // replace operator
+      setExpression((prev) => [...prev.slice(0,-1), newOperator])
     } else if (prevKey === '.') {
-      setLowerVal((prev) => prev.slice(0, -1))
-      setExpression((prev) => [...prev, lowerVal.slice(0, -1), operator])
+      // remove dot
+      const newLowerVal = lowerVal.slice(0,-1)
+      setLowerVal(newLowerVal)
+      setExpression((prev) => [...prev, newLowerVal, newOperator])
+    } else if (prevKey === '=') {
+      // append to existing expression
+      setExpression((prev) => [...prev, newOperator])
+    } else if (prevKey === 'CE') {
+      // new expression
+      setExpression((prev) => [lowerVal, newOperator])
     } else {
-      setExpression((prev) => {
-        if (prevKey === '=')
-          return [...prev, operator]
-        else if (prevKey === 'CE')
-          return [lowerVal, operator]
-        else
-          return [...prev, lowerVal, operator]
-      })
+      // empty expression
+      setExpression((prev) => [...prev, lowerVal, newOperator])
     }
 
-    setPrevKey(operator)
+    setPrevKey(newOperator)
   }
 
   const handleDot = () => {
@@ -82,8 +80,8 @@ export default function Calculator() {
         setLowerVal('0.')
       else
         setLowerVal((prev) => prev + '.')
+      setPrevKey('.')
     }
-    setPrevKey('.')
   }
 
   const handleDigit = () => ({target}) => {
