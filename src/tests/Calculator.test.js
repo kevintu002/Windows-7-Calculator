@@ -119,7 +119,7 @@ test('handleEqual', () => {
   const expression = screen.getByTestId('expression')
   const lowerVal = screen.getByTestId('lowerVal')
 
-  // dot cases
+  // .= cases
   // 0+1.=
   clickSeriesOfButtons('C0+1.=')
   expect(expression.textContent).toBe('0+1')
@@ -132,4 +132,8 @@ test('handleEqual', () => {
   clickSeriesOfButtons('C0+1.1.=')
   expect(expression.textContent).toBe('0+1.1')
   expect(lowerVal.textContent).toBe('1.1')
+  // 1+2=.=
+  clickSeriesOfButtons('C1+2=.=')
+  expect(expression.textContent).toBe('0+2')
+  expect(lowerVal.textContent).toBe('2')
 })
