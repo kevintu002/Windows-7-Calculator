@@ -5,19 +5,10 @@ import { useEffect, useState } from 'react';
 import { evaluate } from 'mathjs';
 
 export default function Calculator() {
-  const states = {
-    FIRST_ARG: 0,
-    SECOND_ARG: 1,
-    EQUAL: 2
-  }
-
   const [expression, setExpression] = useState([])
-  const [result, setResult] = useState()
   const [lowerVal, setLowerVal] = useState('0')
-  const [currState, setCurrState] = useState(states.FIRST_ARG)
   const [prevKey, setPrevKey] = useState(null)
 
-  const [isReadyForResult, setIsReadyForResult] = useState(false)
   const operRegEx = new RegExp('\\+|-|\\*|\\/')
 
   const handleClear = () => {
@@ -28,7 +19,6 @@ export default function Calculator() {
   }
 
   const handleClearEntry = () => {
-    // console.log("asdfasdf:" + expression)
     setLowerVal('0')
     setPrevKey('CE')
   }
@@ -98,31 +88,14 @@ export default function Calculator() {
     setPrevKey(newOperator)
   }
 
-  // useEffect(() => {
-  //   // rerenders the display and evaluates the expression when = is pressed
-  //   if (isReadyForResult) {
-  //     console.log('expression: ' + expression)
-  //     setLowerVal(evaluate(expression.join('')) + '')
-  //     setIsReadyForResult(false)
-  //     setPrevKey('=')
-  //   }
-  // }, [isReadyForResult, expression])
-
-  // const getOperator = () =>{
-  //   return expression.slice(-2)[0]
-  // }
-
-  // const getOperand = () =>{
-  //   return expression.slice(-1)[0]
-  // }
   const myEval = (stringArr) => {
     return evaluate(stringArr.join('')) + ''
   }
 
   const handleEqual = () => () => {
-    // console.log('expression2: ' + expression)
+    // console.log('expression: ' + expression)
     // console.log('prevKey: ' + prevKey)
-
+    
     if (!operRegEx.test(expression)) {
       setExpression([lowerVal])
     } else if (prevKey === '.') {
@@ -158,7 +131,6 @@ export default function Calculator() {
       setLowerVal(myEval([...expression, lowerVal]))
     }
 
-    // setIsReadyForResult(true)
     setPrevKey('=')
   }
 
