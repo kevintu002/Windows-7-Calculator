@@ -9,9 +9,18 @@ function clickButton(val) {
   fireEvent.click(getButton(val))
 }
 
-function clickSeriesOfButtons(str) {
-  str.split('').forEach(key => {
-    clickButton(key)
+function clickSeriesOfButtons(str, clearBeforeSeries=true) {
+  // C before executing
+  if (clearBeforeSeries)
+    clickButton('C')
+
+  // CE becomes E for string manipulation
+  var stringArr = str.toString()
+  if (stringArr.includes('CE'))
+    stringArr = stringArr.replace('CE', 'E')
+  
+  stringArr.split('').forEach(key => {
+    clickButton(key === 'E' ? 'CE' : key)
   });
 }
 
@@ -20,14 +29,13 @@ test('lowerVal operations', () => {
   const expression = screen.getByTestId('expression')
   const lowerVal = screen.getByTestId('lowerVal')
 
-  clickButton('C')
-  clickButton('1')
+  clickSeriesOfButtons('1')
   expect(lowerVal.textContent).toBe('1')
 
-  clickButton('1')
+  clickSeriesOfButtons('1', false)
   expect(lowerVal.textContent).toBe('11')
 
-  clickButton('+');clickButton('3');clickButton('=')
+  clickSeriesOfButtons('+3=', false)
   expect(expression.textContent).toBe('11+3')
   expect(lowerVal.textContent).toBe('14')
 });
@@ -38,58 +46,47 @@ test('dot operator cases', () => {
   const lowerVal = screen.getByTestId('lowerVal')
 
   // 1.+
-  clickButton('C')
-  clickButton('1');clickButton('.');clickButton('+')
+  clickSeriesOfButtons('1.+')
   expect(expression.textContent).toBe('1+')
   expect(lowerVal.textContent).toBe('1')
 
   // 1.1.+
-  clickButton('C')
-  clickButton('1');clickButton('.')
-  clickButton('1');clickButton('.');clickButton('+')
+  clickSeriesOfButtons('1.1.+')
   expect(expression.textContent).toBe('1.1+')
   expect(lowerVal.textContent).toBe('1.1')
 
   // 1+CE-
-  clickButton('C')
-  clickButton('1');clickButton('+');clickButton('CE');clickButton('-')
+  clickSeriesOfButtons('1+CE-')
   expect(expression.textContent).toBe('1+0-')
   expect(lowerVal.textContent).toBe('1')
 
   // 1.11.+
-  clickButton('C')
-  clickButton('1');clickButton('.');clickButton('1');clickButton('1')
-  clickButton('.');clickButton('+')
+  clickSeriesOfButtons('1.11.+')
   expect(expression.textContent).toBe('1.11+')
   expect(lowerVal.textContent).toBe('1.11')
 
   // +.=
-  clickButton('C')
-  clickButton('+');clickButton('.');clickButton('=')
+  clickSeriesOfButtons('+.=')
   expect(expression.textContent).toBe('0+0')
   expect(lowerVal.textContent).toBe('0')
 
   // 1+2=CE=
-  clickButton('C')
-  clickButton('1');clickButton('+');clickButton('2');clickButton('=');clickButton('CE');clickButton('=')
+  clickSeriesOfButtons('1+2=CE=')
   expect(expression.textContent).toBe('0+2')
   expect(lowerVal.textContent).toBe('2')
 
   // 1+2=.=
-  clickButton('C')
-  clickButton('1');clickButton('+');clickButton('2');clickButton('=');clickButton('.');clickButton('=')
+  clickSeriesOfButtons('1+2=.=')
   expect(expression.textContent).toBe('0+2')
   expect(lowerVal.textContent).toBe('2')
 
   // 1+.=
-  clickButton('C')
-  clickButton('1');clickButton('+');clickButton('.');clickButton('=');
+  clickSeriesOfButtons('1+.=')
   expect(expression.textContent).toBe('1+0')
   expect(lowerVal.textContent).toBe('1')
   
   // 1+.1.=
-  clickButton('C')
-  clickButton('1');clickButton('+');clickButton('.');clickButton('1');clickButton('.');clickButton('=')
+  clickSeriesOfButtons('1+.1.=')
   expect(expression.textContent).toBe('1+0.1')
   expect(lowerVal.textContent).toBe('1.1')
 })
@@ -100,36 +97,73 @@ test('CE cases', () => {
   const lowerVal = screen.getByTestId('lowerVal')
 
   // 1+CE-
-  clickButton('C')
-  clickButton('1');clickButton('+');clickButton('CE');clickButton('-')
+  clickSeriesOfButtons('1+CE-')
   expect(expression.textContent).toBe('1+0-')
   expect(lowerVal.textContent).toBe('1')
 
   // 1+2=CE=
-  clickButton('C')
-  clickButton('1');clickButton('+');clickButton('2');clickButton('=');clickButton('CE');clickButton('=')
+  clickSeriesOfButtons('1+2=CE=')
   expect(expression.textContent).toBe('0+2')
   expect(lowerVal.textContent).toBe('2')
 })
-
-// 1=+
 
 test('handleEqual', () => {
   render(<Calculator />);
   const expression = screen.getByTestId('expression')
   const lowerVal = screen.getByTestId('lowerVal')
 
+  // existing expression cases
+  // 1+2=C=
+  clickSeriesOfButtons('1+2=C=')
+  expect(expression.textContent).toBe('0')
+  expect(lowerVal.textContent).toBe('0')
+  // 1+2=8=
+  // 8+2
+  // 10
+  clickSeriesOfButtons('1+2=8=')
+  expect(expression.textContent).toBe('8')
+  expect(lowerVal.textContent).toBe('8')
+
   // .= cases
-  // 0+1.=
-  clickSeriesOfButtons('C0+1.=')
-  expect(expression.textContent).toBe('0+1')
-  expect(lowerVal.textContent).toBe('1')
   // 0+.=
-  clickSeriesOfButtons('C0+.=')
+  clickSeriesOfButtons('0+.=')
   expect(expression.textContent).toBe('0+0')
   expect(lowerVal.textContent).toBe('0')
+  // 0+1.=
+  clickSeriesOfButtons('0+1.=')
+  expect(expression.textContent).toBe('0+1')
+  expect(lowerVal.textContent).toBe('1')
   // 0+1.1.=
-  clickSeriesOfButtons('C0+1.1.=')
+  clickSeriesOfButtons('0+1.1.=')
   expect(expression.textContent).toBe('0+1.1')
   expect(lowerVal.textContent).toBe('1.1')
+
+  // == cases
+  // 0+==
+  clickSeriesOfButtons('0+==')
+  expect(expression.textContent).toBe('0+0')
+  expect(lowerVal.textContent).toBe('0')
+  // 0+1==
+  clickSeriesOfButtons('0+1==')
+  expect(expression.textContent).toBe('1+1')
+  expect(lowerVal.textContent).toBe('2')
+  // 0+1.1==
+  clickSeriesOfButtons('0+1.1==')
+  expect(expression.textContent).toBe('1.1+1.1')
+  expect(lowerVal.textContent).toBe('2.2')
+  // 1+2===
+  clickSeriesOfButtons('1+2===')
+  expect(expression.textContent).toBe('5+2')
+  expect(lowerVal.textContent).toBe('7')
+
+  // CE cases
+  // 0+CE=
+  // 0+1CE=
+  // 0+1.1CE=
+  // 1+2CECE=
+})
+
+test('handleOperator', () => {
+
+  // 1=+
 })
