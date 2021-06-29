@@ -17,7 +17,7 @@ function clickSeriesOfButtons(str, clearBeforeSeries=true) {
   // CE becomes E for string manipulation
   var stringArr = str.toString()
   if (stringArr.includes('CE'))
-    stringArr = stringArr.replace('CE', 'E')
+    stringArr = stringArr.replace(/CE/g, 'E')
   
   stringArr.split('').forEach(key => {
     clickButton(key === 'E' ? 'CE' : key)
@@ -137,6 +137,10 @@ test('handleEqual', () => {
   clickSeriesOfButtons('0+1.1.=')
   expect(expression.textContent).toBe('0+1.1')
   expect(lowerVal.textContent).toBe('1.1')
+  // 1+2=8.=
+  clickSeriesOfButtons('1+2=8.=')
+  expect(expression.textContent).toBe('8')
+  expect(lowerVal.textContent).toBe('8')
 
   // == cases
   // 0+==
@@ -155,12 +159,32 @@ test('handleEqual', () => {
   clickSeriesOfButtons('1+2===')
   expect(expression.textContent).toBe('5+2')
   expect(lowerVal.textContent).toBe('7')
+  // 1+2=8==
+  clickSeriesOfButtons('1+2=8.=')
+  expect(expression.textContent).toBe('8')
+  expect(lowerVal.textContent).toBe('8')
 
   // CE cases
   // 0+CE=
+  clickSeriesOfButtons('0+CE=')
+  expect(expression.textContent).toBe('0+0')
+  expect(lowerVal.textContent).toBe('0')
   // 0+1CE=
+  clickSeriesOfButtons('0+1CE=')
+  expect(expression.textContent).toBe('0+0')
+  expect(lowerVal.textContent).toBe('0')
   // 0+1.1CE=
+  clickSeriesOfButtons('0+1.1CE=')
+  expect(expression.textContent).toBe('0+0')
+  expect(lowerVal.textContent).toBe('0')
   // 1+2CECE=
+  clickSeriesOfButtons('1+2CECE=')
+  expect(expression.textContent).toBe('1+0')
+  expect(lowerVal.textContent).toBe('1')
+  // 1+2=8CE=
+  clickSeriesOfButtons('1+2=8CE=')
+  expect(expression.textContent).toBe('0')
+  expect(lowerVal.textContent).toBe('0')
 })
 
 test('handleOperator', () => {

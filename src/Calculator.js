@@ -111,7 +111,13 @@ export default function Calculator() {
     // console.log('prevKey: ' + prevKey)
 
     if (!operRegEx.test(expression)) {
-      setExpression([lowerVal])
+      if (prevKey !== '.') {
+        setExpression([lowerVal])
+      } else {
+        // remove dot from expression and lowerVal
+        setExpression([lowerVal.slice(0,-1)])
+        setLowerVal((prev) => prev.slice(0,-1))
+      }
     } else if (prevKey === '.') {
       // safe to always slice b/c >1 dot in lowerVal does not exist,
       // so last key is never . when a dot already exists
@@ -119,12 +125,16 @@ export default function Calculator() {
 
       // was last item in expression was an operator?
       if (operRegEx.test(expression.slice(-1))) {
-        setExpression([...expression, newLowerVal])
-        setLowerVal(myEval([...expression, newLowerVal]))
+        const newExpression = [...expression, newLowerVal]
+
+        setExpression(newExpression)
+        setLowerVal(myEval(newExpression))
       } else {
         const [lastOperator, lastOperand] = expression.slice(-2)
-        setExpression([newLowerVal, lastOperator, lastOperand])
-        setLowerVal(myEval([newLowerVal, lastOperator, lastOperand]))
+        const newExpression = [newLowerVal, lastOperator, lastOperand]
+
+        setExpression(newExpression)
+        setLowerVal(myEval(newExpression))
       } 
     } else if (prevKey === '=') {
       // repeat last operator and operand
@@ -134,12 +144,19 @@ export default function Calculator() {
       setExpression([lowerVal, lastOperator, lastOperand])
       setLowerVal(newResult)
     } else if (prevKey === 'CE') {
-      // use last operator and operand on curr lowerVal
-      const [lastOperator, lastOperand] = expression.slice(-2)
-      const newResult = myEval([lowerVal, lastOperator, lastOperand])
+      if (operRegEx.test(expression.slice(-1))) {
+        const newExpression = [...expression, lowerVal]
 
-      setExpression([lowerVal, lastOperator, lastOperand])
-      setLowerVal(newResult)
+        setExpression(newExpression)
+        setLowerVal(myEval(newExpression))
+      } else {
+        // use last operator and operand on curr lowerVal
+        const [lastOperator, lastOperand] = expression.slice(-2)
+        const newExpression = [lowerVal, lastOperator, lastOperand]
+
+        setExpression(newExpression)
+        setLowerVal(myEval(newExpression))
+      }
     } else { // just append
       setExpression([...expression, lowerVal])
       setLowerVal(myEval([...expression, lowerVal]))
