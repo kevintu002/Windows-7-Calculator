@@ -45,35 +45,15 @@ test('dot operator cases', () => {
   const expression = screen.getByTestId('expression')
   const lowerVal = screen.getByTestId('lowerVal')
 
-  // 1.+
-  clickSeriesOfButtons('1.+')
-  expect(expression.textContent).toBe('1+')
-  expect(lowerVal.textContent).toBe('1')
-
-  // 1.1.+
-  clickSeriesOfButtons('1.1.+')
-  expect(expression.textContent).toBe('1.1+')
-  expect(lowerVal.textContent).toBe('1.1')
-
   // 1+CE-
   clickSeriesOfButtons('1+CE-')
   expect(expression.textContent).toBe('1+0-')
   expect(lowerVal.textContent).toBe('1')
 
-  // 1.11.+
-  clickSeriesOfButtons('1.11.+')
-  expect(expression.textContent).toBe('1.11+')
-  expect(lowerVal.textContent).toBe('1.11')
-
   // +.=
   clickSeriesOfButtons('+.=')
   expect(expression.textContent).toBe('0+0')
   expect(lowerVal.textContent).toBe('0')
-
-  // 1+2=CE=
-  clickSeriesOfButtons('1+2=CE=')
-  expect(expression.textContent).toBe('0+2')
-  expect(lowerVal.textContent).toBe('2')
 
   // 1+2=.=
   clickSeriesOfButtons('1+2=.=')
@@ -100,11 +80,6 @@ test('CE cases', () => {
   clickSeriesOfButtons('1+CE-')
   expect(expression.textContent).toBe('1+0-')
   expect(lowerVal.textContent).toBe('1')
-
-  // 1+2=CE=
-  clickSeriesOfButtons('1+2=CE=')
-  expect(expression.textContent).toBe('0+2')
-  expect(lowerVal.textContent).toBe('2')
 })
 
 test('handleEqual', () => {
@@ -185,9 +160,89 @@ test('handleEqual', () => {
   clickSeriesOfButtons('1+2=8CE=')
   expect(expression.textContent).toBe('0')
   expect(lowerVal.textContent).toBe('0')
+  // 1+2=CE=
+  clickSeriesOfButtons('1+2=CE=')
+  expect(expression.textContent).toBe('0+2')
+  expect(lowerVal.textContent).toBe('2')
 })
 
 test('handleOperator', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
 
+  // existing operator cases
+  // +-
+  clickSeriesOfButtons('+-')
+  expect(expression.textContent).toBe('0-')
+  expect(lowerVal.textContent).toBe('0')
+
+  // .operator cases
+  // 1.+
+  clickSeriesOfButtons('1.+')
+  expect(expression.textContent).toBe('1+')
+  expect(lowerVal.textContent).toBe('1')
+  // 0+.*
+  clickSeriesOfButtons('0+.*')
+  expect(expression.textContent).toBe('0+0*')
+  expect(lowerVal.textContent).toBe('0')
+  // 1.1.+
+  clickSeriesOfButtons('1.1.+')
+  expect(expression.textContent).toBe('1.1+')
+  expect(lowerVal.textContent).toBe('1.1')
+  // 0+1./
+  clickSeriesOfButtons('0+1./')
+  expect(expression.textContent).toBe('0+1/')
+  expect(lowerVal.textContent).toBe('1')
+  // 1+2..+
+  clickSeriesOfButtons('1+2..+')
+  expect(expression.textContent).toBe('1+2+')
+  expect(lowerVal.textContent).toBe('3')
+  // 1+2=.+
+  clickSeriesOfButtons('1+2=.+')
+  expect(expression.textContent).toBe('0+')
+  expect(lowerVal.textContent).toBe('0')
+  // 1+2=8.+
+  clickSeriesOfButtons('1+2=8.+')
+  expect(expression.textContent).toBe('8+')
+  expect(lowerVal.textContent).toBe('8')
+  // 1.+2.-
+  clickSeriesOfButtons('1.+2.-')
+  expect(expression.textContent).toBe('1+2-')
+  expect(lowerVal.textContent).toBe('3')
+  // 1+.+
+  clickSeriesOfButtons('1+.+')
+  expect(expression.textContent).toBe('1+0+')
+  expect(lowerVal.textContent).toBe('1')
+
+  // =operator cases
   // 1=+
+  clickSeriesOfButtons('1=+')
+  expect(expression.textContent).toBe('1+')
+  expect(lowerVal.textContent).toBe('1')
+  // 0+=*
+  clickSeriesOfButtons('0+=*')
+  expect(expression.textContent).toBe('0*')
+  expect(lowerVal.textContent).toBe('0')
+  // 1=1=+
+  clickSeriesOfButtons('1=1=+')
+  expect(expression.textContent).toBe('1+')
+  expect(lowerVal.textContent).toBe('1')
+  // 0+1=/
+  clickSeriesOfButtons('0+1=/')
+  expect(expression.textContent).toBe('1/')
+  expect(lowerVal.textContent).toBe('1')
+  // 1+2=..-
+  clickSeriesOfButtons('1+2=..-')
+  expect(expression.textContent).toBe('0-0')
+  expect(lowerVal.textContent).toBe('0')
+  // 1+2=+=+
+  clickSeriesOfButtons('1+2=+=+')
+  expect(expression.textContent).toBe('6+')
+  expect(lowerVal.textContent).toBe('6')
+  // 1+2=8+=+
+  clickSeriesOfButtons('1+2=8+=+')
+  expect(expression.textContent).toBe('16+')
+  expect(lowerVal.textContent).toBe('16')
+
 })
