@@ -81,10 +81,13 @@ export default function Calculator() {
     if (operRegEx.test(prevKey)) {
       // replace operator
       setExpression(prev => [...prev.slice(0,-1), newOperator])
-    } else if (prevKey === '.') {
-      // remove dot
-      const newLowerVal = lowerVal.slice(0,-1)
+    } else if (prevKey === '.' || prevKey === 'CE') {
+      let newLowerVal = lowerVal
       let newExpression
+
+      // remove dot
+      if (lowerVal.slice(-1)[0] === '.')
+        newLowerVal = lowerVal.slice(0,-1)
 
       if (operRegEx.test(expression.slice(-1))) {
         newExpression = [...expression, newLowerVal]
@@ -100,17 +103,6 @@ export default function Calculator() {
 
       setExpression([newResult, newOperator])
       setLowerVal(newResult)
-    } else if (prevKey === 'CE') {
-      let newExpression
-
-      if (operRegEx.test(expression.slice(-1))) {
-        newExpression = [...expression, lowerVal]
-      } else {
-        newExpression = [lowerVal]
-      }
-
-      setLowerVal(myEval(newExpression))
-      setExpression([...newExpression, newOperator])
     } else {
       // evaluate and display current expression with new operator
       const newExpression = [...expression, lowerVal]
