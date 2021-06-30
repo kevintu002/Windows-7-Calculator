@@ -84,29 +84,39 @@ export default function Calculator() {
     } else if (prevKey === '.') {
       // remove dot
       const newLowerVal = lowerVal.slice(0,-1)
-      var newExpression
+      let newExpression
 
       if (operRegEx.test(expression.slice(-1))) {
         newExpression = [...expression, newLowerVal]
-
-        setLowerVal(myEval([...expression, newLowerVal]))
       } else {
         newExpression = [newLowerVal]
-        
-        setLowerVal(newLowerVal)
       }
 
+      setLowerVal(myEval(newExpression))
       setExpression([...newExpression, newOperator])
     } else if (prevKey === '=') {
       // append to existing expression
-      setExpression(prev => [...prev, newOperator]) // need eval somewhere
-    } else if (prevKey === 'CE' && !operRegEx.test(expression)) {
-      // new expression
-      setExpression([lowerVal, newOperator])
+      const newResult = myEval(expression)
+
+      setExpression([newResult, newOperator])
+      setLowerVal(newResult)
+    } else if (prevKey === 'CE') {
+      let newExpression
+
+      if (operRegEx.test(expression.slice(-1))) {
+        newExpression = [...expression, lowerVal]
+      } else {
+        newExpression = [lowerVal]
+      }
+
+      setLowerVal(myEval(newExpression))
+      setExpression([...newExpression, newOperator])
     } else {
       // evaluate and display current expression with new operator
-      setExpression(prev => [...prev, lowerVal, newOperator])
-      setLowerVal(myEval([...expression, lowerVal]))
+      const newExpression = [...expression, lowerVal]
+
+      setExpression([...newExpression, newOperator])
+      setLowerVal(myEval(newExpression))
     }
 
     setPrevKey(newOperator)
@@ -132,7 +142,7 @@ export default function Calculator() {
       // safe to always slice b/c >1 dot in lowerVal does not exist,
       // so last key is never . when a dot already exists
       const newLowerVal = lowerVal.slice(0,-1)
-      var newExpression
+      let newExpression
 
       // was last item in expression was an operator?
       if (operRegEx.test(expression.slice(-1))) {
@@ -153,8 +163,7 @@ export default function Calculator() {
       setExpression([lowerVal, lastOperator, lastOperand])
       setLowerVal(newResult)
     } else if (prevKey === 'CE') {
-      var newExpression
-
+      let newExpression
       if (operRegEx.test(expression.slice(-1))) {
         newExpression = [...expression, lowerVal]
       } else {
