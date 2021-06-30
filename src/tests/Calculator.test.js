@@ -24,7 +24,7 @@ function clickSeriesOfButtons(str, clearBeforeSeries=true) {
   });
 }
 
-test('lowerVal operations', () => {
+test('basic operations', () => {
   render(<Calculator />);
   const expression = screen.getByTestId('expression')
   const lowerVal = screen.getByTestId('lowerVal')
@@ -40,38 +40,11 @@ test('lowerVal operations', () => {
   expect(lowerVal.textContent).toBe('14')
 });
 
-test('dot operator cases', () => {
+test('handleEqual: existing expression cases', () => {
   render(<Calculator />);
   const expression = screen.getByTestId('expression')
   const lowerVal = screen.getByTestId('lowerVal')
 
-  // +.=
-  clickSeriesOfButtons('+.=')
-  expect(expression.textContent).toBe('0+0')
-  expect(lowerVal.textContent).toBe('0')
-
-  // 1+2=.=
-  clickSeriesOfButtons('1+2=.=')
-  expect(expression.textContent).toBe('0+2')
-  expect(lowerVal.textContent).toBe('2')
-
-  // 1+.=
-  clickSeriesOfButtons('1+.=')
-  expect(expression.textContent).toBe('1+0')
-  expect(lowerVal.textContent).toBe('1')
-  
-  // 1+.1.=
-  clickSeriesOfButtons('1+.1.=')
-  expect(expression.textContent).toBe('1+0.1')
-  expect(lowerVal.textContent).toBe('1.1')
-})
-
-test('handleEqual', () => {
-  render(<Calculator />);
-  const expression = screen.getByTestId('expression')
-  const lowerVal = screen.getByTestId('lowerVal')
-
-  // existing expression cases
   // 1+2=C=
   clickSeriesOfButtons('1+2=C=')
   expect(expression.textContent).toBe('0')
@@ -80,8 +53,13 @@ test('handleEqual', () => {
   clickSeriesOfButtons('1+2=8=')
   expect(expression.textContent).toBe('8')
   expect(lowerVal.textContent).toBe('8')
+})
 
-  // .= cases
+test('handleEqual: .= cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
   // 0+.=
   clickSeriesOfButtons('0+.=')
   expect(expression.textContent).toBe('0+0')
@@ -98,8 +76,29 @@ test('handleEqual', () => {
   clickSeriesOfButtons('1+2=8.=')
   expect(expression.textContent).toBe('8')
   expect(lowerVal.textContent).toBe('8')
+  // +.=
+  clickSeriesOfButtons('+.=')
+  expect(expression.textContent).toBe('0+0')
+  expect(lowerVal.textContent).toBe('0')
+  // 1+2=.=
+  clickSeriesOfButtons('1+2=.=')
+  expect(expression.textContent).toBe('0+2')
+  expect(lowerVal.textContent).toBe('2')
+  // 1+.=
+  clickSeriesOfButtons('1+.=')
+  expect(expression.textContent).toBe('1+0')
+  expect(lowerVal.textContent).toBe('1')
+  // 1+.1.=
+  clickSeriesOfButtons('1+.1.=')
+  expect(expression.textContent).toBe('1+0.1')
+  expect(lowerVal.textContent).toBe('1.1')
+})
 
-  // == cases
+test('handleEqual: == cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
   // 0+==
   clickSeriesOfButtons('0+==')
   expect(expression.textContent).toBe('0+0')
@@ -120,8 +119,13 @@ test('handleEqual', () => {
   clickSeriesOfButtons('1+2=8.=')
   expect(expression.textContent).toBe('8')
   expect(lowerVal.textContent).toBe('8')
+})
 
-  // CE cases
+test('handleEqual: CE cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
   // 0+CE=
   clickSeriesOfButtons('0+CE=')
   expect(expression.textContent).toBe('0+0')
@@ -148,7 +152,7 @@ test('handleEqual', () => {
   expect(lowerVal.textContent).toBe('2')
 })
 
-test('handleOperator', () => {
+test('handleOperator: existing operator cases', () => {
   render(<Calculator />);
   const expression = screen.getByTestId('expression')
   const lowerVal = screen.getByTestId('lowerVal')
@@ -158,8 +162,13 @@ test('handleOperator', () => {
   clickSeriesOfButtons('+-')
   expect(expression.textContent).toBe('0-')
   expect(lowerVal.textContent).toBe('0')
+})
 
-  // .operator cases
+test('handleOperator: .operator cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
   // 1.+
   clickSeriesOfButtons('1.+')
   expect(expression.textContent).toBe('1+')
@@ -196,8 +205,13 @@ test('handleOperator', () => {
   clickSeriesOfButtons('1+.+')
   expect(expression.textContent).toBe('1+0+')
   expect(lowerVal.textContent).toBe('1')
+})
 
-  // =operator cases
+test('handleOperator: =operator cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
   // 1=+
   clickSeriesOfButtons('1=+')
   expect(expression.textContent).toBe('1+')
@@ -230,8 +244,13 @@ test('handleOperator', () => {
   clickSeriesOfButtons('1+2=8+=+')
   expect(expression.textContent).toBe('16+')
   expect(lowerVal.textContent).toBe('16')
+})
 
-  // CEoperator cases
+test('handleOperator: CEoperator cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
   // 1+CE-
   clickSeriesOfButtons('1+CE-')
   expect(expression.textContent).toBe('1+0-')
