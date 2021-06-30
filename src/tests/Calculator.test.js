@@ -11,16 +11,29 @@ function clickButton(val) {
 
 function clickSeriesOfButtons(str, clearBeforeSeries=true) {
   // C before executing
-  if (clearBeforeSeries)
+  if (clearBeforeSeries) {
     clickButton('C')
+    clickButton('MC')
+  }
 
   // CE becomes E for string manipulation
   let stringArr = str.toString()
   if (stringArr.includes('CE'))
     stringArr = stringArr.replace(/CE/g, 'E')
+  if (stringArr.includes('MR'))
+    stringArr = stringArr.replace(/MR/g, 'R')
+  if (stringArr.includes('MS'))
+    stringArr = stringArr.replace(/MS/g, 'S')
   
   stringArr.split('').forEach(key => {
-    clickButton(key === 'E' ? 'CE' : key)
+    if (key === 'E')
+      clickButton('CE')
+    else if (key === 'R')
+      clickButton('MR')
+    else if (key === 'S')
+      clickButton('MS')
+    else
+      clickButton(key)
   });
 }
 
@@ -287,4 +300,19 @@ test('handleOperator: CEoperator cases', () => {
   clickSeriesOfButtons('1+2CE8+CE+')
   expect(expression.textContent).toBe('1+8+0+')
   expect(lowerVal.textContent).toBe('9')
+})
+
+test('mem cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
+  // 9MS1+2MR5
+  clickSeriesOfButtons('9MS1+2MR5')
+  expect(expression.textContent).toBe('1+')
+  expect(lowerVal.textContent).toBe('5')
+  // 9MS1+2MS7
+  clickSeriesOfButtons('9MS1+2MS7')
+  expect(expression.textContent).toBe('1+')
+  expect(lowerVal.textContent).toBe('7')
 })

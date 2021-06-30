@@ -17,10 +17,12 @@ export default function Calculator() {
 
   const MRetrieve = () => {
     setLowerVal(mem)
+    setPrevKey('MR')
   }
 
   const MStore = () => {
     setMem(lowerVal)
+    setPrevKey('MS')
   }
 
   const MAdd = () => {
@@ -82,7 +84,14 @@ export default function Calculator() {
   const handleDigit = ({target}) => {
     const newDigit = target.name;
     
-    if (prevKey !== '=' && !operRegEx.test(prevKey)) {
+    
+    // if (prevKey === 'MR' || prevKey === 'MS') {
+    //   // MR and MS overwrites lowerVal
+    //   setLowerVal(newDigit)
+    //   return
+    // }
+
+    if (prevKey !== '=' && prevKey !== 'MR' && prevKey !== 'MS' && !operRegEx.test(prevKey)) {
       // overwrite 0. otherwise, append
       setLowerVal(prev => prev === '0' ? newDigit : prev + newDigit)
     } else {
