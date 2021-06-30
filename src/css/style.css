@@ -2,8 +2,7 @@ body {
   font-size: 12px;
   font-family: 'Lato', sans-serif;
   background-color: #fbfbfb;
-  /* https://www.hdwallpapers.in/thumbs/2009/windows_7_blue-t2.jpg */
-  /* background: url('https://www.hdwallpapers.in/walls/windows_7_original-wide.jpg') no-repeat center center fixed; */
+  background: url('https://cdn.hipwallpaper.com/i/66/36/a273Ac.png') no-repeat center center fixed;
   background-size: cover;
 }
 
@@ -89,7 +88,6 @@ main {
   position: absolute;
   left: 4px;
   bottom: 8px;
-  /* display: none; */
 }
 .error {
   min-height: 12px;

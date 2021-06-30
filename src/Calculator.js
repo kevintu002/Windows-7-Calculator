@@ -46,10 +46,11 @@ export default function Calculator() {
 
   const toggleSign = () => {
     setLowerVal(prev => (prev * -1) + '')
+    setPrevKey('toggleSign')
   }
 
   const handleSqrt = () => {
-
+    // sqrt and inverse are handled the same way
   }
   
   const handlePercent = () => {
@@ -83,15 +84,8 @@ export default function Calculator() {
 
   const handleDigit = ({target}) => {
     const newDigit = target.name;
-    
-    
-    // if (prevKey === 'MR' || prevKey === 'MS') {
-    //   // MR and MS overwrites lowerVal
-    //   setLowerVal(newDigit)
-    //   return
-    // }
 
-    if (prevKey !== '=' && prevKey !== 'MR' && prevKey !== 'MS' && !operRegEx.test(prevKey)) {
+    if (!['=', 'MR', 'MS'].includes(prevKey) && !operRegEx.test(prevKey)) {
       // overwrite 0. otherwise, append
       setLowerVal(prev => prev === '0' ? newDigit : prev + newDigit)
     } else {
@@ -110,7 +104,7 @@ export default function Calculator() {
     if (operRegEx.test(prevKey)) {
       // replace operator
       setExpression(prev => [...prev.slice(0,-1), newOperator])
-    } else if (prevKey === '.' || prevKey === 'CE') {
+    } else if (['.', 'CE', 'toggleSign', 'MR', 'MS'].includes(prevKey)) {
       let newLowerVal = lowerVal
       let newExpression
 
@@ -159,16 +153,19 @@ export default function Calculator() {
         setExpression([lowerVal.slice(0,-1)])
         setLowerVal(prev => prev.slice(0,-1))
       }
-    } else if (prevKey === '.') {
-      // safe to always slice b/c >1 dot in lowerVal does not exist,
-      // so last key is never . when a dot already exists
-      const newLowerVal = lowerVal.slice(0,-1)
+    } else if (['.', 'CE', 'toggleSign', 'MR', 'MS'].includes(prevKey)) {
+      let newLowerVal = lowerVal
       let newExpression
+
+      // remove dot
+      if (lowerVal.slice(-1)[0] === '.')
+        newLowerVal = lowerVal.slice(0,-1)
 
       // was last item in expression was an operator?
       if (operRegEx.test(expression.slice(-1))) {
         newExpression = [...expression, newLowerVal]
       } else {
+        // use last operator and operand on curr lowerVal
         const [lastOperator, lastOperand] = expression.slice(-2)
 
         newExpression = [newLowerVal, lastOperator, lastOperand]
@@ -183,19 +180,6 @@ export default function Calculator() {
 
       setExpression([lowerVal, lastOperator, lastOperand])
       setLowerVal(newResult)
-    } else if (prevKey === 'CE') {
-      let newExpression
-      if (operRegEx.test(expression.slice(-1))) {
-        newExpression = [...expression, lowerVal]
-      } else {
-        // use last operator and operand on curr lowerVal
-        const [lastOperator, lastOperand] = expression.slice(-2)
-
-        newExpression = [lowerVal, lastOperator, lastOperand]
-      }
-
-      setExpression(newExpression)
-      setLowerVal(myEval(newExpression))
     } else { // just append
       setExpression([...expression, lowerVal])
       setLowerVal(myEval([...expression, lowerVal]))
@@ -205,7 +189,7 @@ export default function Calculator() {
   }
 
   return (
-    <div className="calculator" >
+    <main className="calculator" >
       <div className="menu"><span>V</span>iew&nbsp;&nbsp; <span>E</span>dit&nbsp;&nbsp; <span>H</span>elp</div>
       <div className="display">
         <CalcDisplay upperVal={expression} lowerVal={lowerVal} />
@@ -222,7 +206,6 @@ export default function Calculator() {
         <CalcKey name="1" onClick={handleDigit}/><CalcKey name="2" onClick={handleDigit}/><CalcKey name="3" onClick={handleDigit}/><CalcKey name="-" onClick={handleOperator}/><br/>
         <CalcKey name="0" onClick={handleDigit}/><CalcKey name="." onClick={handleDot}/><CalcKey name="+" onClick={handleOperator}/><CalcKey name="=" onClick={handleEqual}/>
       </div>
-      
-    </div>
+    </main>
   );
 }

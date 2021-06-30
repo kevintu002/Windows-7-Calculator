@@ -24,6 +24,8 @@ function clickSeriesOfButtons(str, clearBeforeSeries=true) {
     stringArr = stringArr.replace(/MR/g, 'R')
   if (stringArr.includes('MS'))
     stringArr = stringArr.replace(/MS/g, 'S')
+  if (stringArr.includes('pm'))
+    stringArr = stringArr.replace(/pm/g, '±')
   
   stringArr.split('').forEach(key => {
     if (key === 'E')
@@ -165,6 +167,112 @@ test('handleEqual: CE cases', () => {
   expect(lowerVal.textContent).toBe('2')
 })
 
+test('handleEqual: MR= cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
+  // 9MS1+2MR5=
+  clickSeriesOfButtons('9MS1+2MR5=')
+  expect(expression.textContent).toBe('1+5')
+  expect(lowerVal.textContent).toBe('6')
+  // 9MS1+2CEMR=
+  clickSeriesOfButtons('9MS1+2CEMR=')
+  expect(expression.textContent).toBe('1+9')
+  expect(lowerVal.textContent).toBe('10')
+  // 9MS1+MR=
+  clickSeriesOfButtons('9MS1+MR=')
+  expect(expression.textContent).toBe('1+9')
+  expect(lowerVal.textContent).toBe('10')
+  // 9MS1=MR=
+  clickSeriesOfButtons('9MS1=MR=')
+  expect(expression.textContent).toBe('9')
+  expect(lowerVal.textContent).toBe('9')
+  // 9MS0+MR=
+  clickSeriesOfButtons('9MS0+MR=')
+  expect(expression.textContent).toBe('0+9')
+  expect(lowerVal.textContent).toBe('9')
+  // 9MS5+MR=
+  clickSeriesOfButtons('9MS5+MR=')
+  expect(expression.textContent).toBe('5+9')
+  expect(lowerVal.textContent).toBe('14')
+  // 9MS1=1MR=
+  clickSeriesOfButtons('9MS1=1MR=')
+  expect(expression.textContent).toBe('9')
+  expect(lowerVal.textContent).toBe('9')
+  // 9MS0+1MR=
+  clickSeriesOfButtons('9MS0+1MR=')
+  expect(expression.textContent).toBe('0+9')
+  expect(lowerVal.textContent).toBe('9')
+  // 9MS1+2=.MR=
+  clickSeriesOfButtons('9MS1+2=.MR=')
+  expect(expression.textContent).toBe('9+2')
+  expect(lowerVal.textContent).toBe('11')
+  // 9MS1+2=+MR=
+  clickSeriesOfButtons('9MS1+2=+MR=')
+  expect(expression.textContent).toBe('3+9')
+  expect(lowerVal.textContent).toBe('12')
+  // 9MS1+2MR8+MR=
+  clickSeriesOfButtons('9MS1+2MR8+MR=')
+  expect(expression.textContent).toBe('1+8+9')
+  expect(lowerVal.textContent).toBe('18')
+})
+
+test('handleEqual: MS= cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
+  // 9MS1+2MS5=
+  clickSeriesOfButtons('9MS1+2MS5=')
+  expect(expression.textContent).toBe('1+5')
+  expect(lowerVal.textContent).toBe('6')
+  // 9MS1+2CEMS=
+  clickSeriesOfButtons('9MS1+2CEMS=')
+  expect(expression.textContent).toBe('1+0')
+  expect(lowerVal.textContent).toBe('1')
+  // 9MS1+MS=
+  clickSeriesOfButtons('9MS1+MS=')
+  expect(expression.textContent).toBe('1+1')
+  expect(lowerVal.textContent).toBe('2')
+  // 9MS1=MS=
+  clickSeriesOfButtons('9MS1=MS=')
+  expect(expression.textContent).toBe('1')
+  expect(lowerVal.textContent).toBe('1')
+  // 9MS0+MS=
+  clickSeriesOfButtons('9MS0+MS=')
+  expect(expression.textContent).toBe('0+0')
+  expect(lowerVal.textContent).toBe('0')
+  // 9MS5+MS=
+  clickSeriesOfButtons('9MS5+MS=')
+  expect(expression.textContent).toBe('5+5')
+  expect(lowerVal.textContent).toBe('10')
+  // 9MS1=1MS=
+  clickSeriesOfButtons('9MS1=1MS=')
+  expect(expression.textContent).toBe('1')
+  expect(lowerVal.textContent).toBe('1')
+  // 9MS0+1MS=
+  clickSeriesOfButtons('9MS0+1MS=')
+  expect(expression.textContent).toBe('0+1')
+  expect(lowerVal.textContent).toBe('1')
+  // 9MS1+2=.MS=
+  clickSeriesOfButtons('9MS1+2=.MS=')
+  expect(expression.textContent).toBe('0+2')
+  expect(lowerVal.textContent).toBe('2')
+  // 9MS1+2=+MS=
+  clickSeriesOfButtons('9MS1+2=+MS=')
+  expect(expression.textContent).toBe('3+3')
+  expect(lowerVal.textContent).toBe('6')
+  // 9MS1+2MS8+MS=
+  clickSeriesOfButtons('9MS1+2MS8+MS=')
+  expect(expression.textContent).toBe('1+8+9')
+  expect(lowerVal.textContent).toBe('18')
+  // 2+MS3=
+  clickSeriesOfButtons('2+MS3=')
+  expect(expression.textContent).toBe('2+3')
+  expect(lowerVal.textContent).toBe('5')
+})
+
 test('handleOperator: existing operator cases', () => {
   render(<Calculator />);
   const expression = screen.getByTestId('expression')
@@ -302,7 +410,7 @@ test('handleOperator: CEoperator cases', () => {
   expect(lowerVal.textContent).toBe('9')
 })
 
-test('mem cases', () => {
+test('handleOperator: MRoperator cases', () => {
   render(<Calculator />);
   const expression = screen.getByTestId('expression')
   const lowerVal = screen.getByTestId('lowerVal')
@@ -311,8 +419,125 @@ test('mem cases', () => {
   clickSeriesOfButtons('9MS1+2MR5')
   expect(expression.textContent).toBe('1+')
   expect(lowerVal.textContent).toBe('5')
+  // 9MS1+2CEMR+
+  clickSeriesOfButtons('9MS1+2CEMR+')
+  expect(expression.textContent).toBe('1+9+')
+  expect(lowerVal.textContent).toBe('10')
+  // 9MS1+MR-
+  clickSeriesOfButtons('9MS1+MR-')
+  expect(expression.textContent).toBe('1+9-')
+  expect(lowerVal.textContent).toBe('10')
+  // 9MS1=MR+
+  clickSeriesOfButtons('9MS1=MR+')
+  expect(expression.textContent).toBe('9+')
+  expect(lowerVal.textContent).toBe('9')
+  // 9MS0+MR*
+  clickSeriesOfButtons('9MS0+MR*')
+  expect(expression.textContent).toBe('0+9*')
+  expect(lowerVal.textContent).toBe('9')
+  // 9MS5+MR*
+  clickSeriesOfButtons('9MS5+MR*')
+  expect(expression.textContent).toBe('5+9*')
+  expect(lowerVal.textContent).toBe('14')
+  // 9MS1=1MR+
+  clickSeriesOfButtons('9MS1=1MR+')
+  expect(expression.textContent).toBe('9+')
+  expect(lowerVal.textContent).toBe('9')
+  // 9MS0+1MR/
+  clickSeriesOfButtons('9MS0+1MR/')
+  expect(expression.textContent).toBe('0+9/')
+  expect(lowerVal.textContent).toBe('9')
+  // 9MS1+2=.MR-
+  clickSeriesOfButtons('9MS1+2=.MR-')
+  expect(expression.textContent).toBe('9-')
+  expect(lowerVal.textContent).toBe('9')
+  // 9MS1+2=+MR+
+  clickSeriesOfButtons('9MS1+2=+MR+')
+  expect(expression.textContent).toBe('3+9+')
+  expect(lowerVal.textContent).toBe('12')
+  // 9MS1+2MR8+MR+
+  clickSeriesOfButtons('9MS1+2MR8+MR+')
+  expect(expression.textContent).toBe('1+8+9+')
+  expect(lowerVal.textContent).toBe('18')
+})
+
+test('handleOperator: MSoperator cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
+  // 9MS1+2MS5
+  clickSeriesOfButtons('9MS1+2MS5')
+  expect(expression.textContent).toBe('1+')
+  expect(lowerVal.textContent).toBe('5')
+  // 9MS1+2CEMS+
+  clickSeriesOfButtons('9MS1+2CEMS+')
+  expect(expression.textContent).toBe('1+0+')
+  expect(lowerVal.textContent).toBe('1')
+  // 9MS1+MS-
+  clickSeriesOfButtons('9MS1+MS-')
+  expect(expression.textContent).toBe('1-')
+  expect(lowerVal.textContent).toBe('1')
+  // 9MS1=MS+
+  clickSeriesOfButtons('9MS1=MS+')
+  expect(expression.textContent).toBe('1+')
+  expect(lowerVal.textContent).toBe('1')
+  // 9MS0+MS*
+  clickSeriesOfButtons('9MS0+MS*')
+  expect(expression.textContent).toBe('0*')
+  expect(lowerVal.textContent).toBe('0')
+  // 9MS5+MS*
+  clickSeriesOfButtons('9MS5+MS*')
+  expect(expression.textContent).toBe('5*')
+  expect(lowerVal.textContent).toBe('5')
+  // 9MS1=1MS+
+  clickSeriesOfButtons('9MS1=1MS+')
+  expect(expression.textContent).toBe('1+')
+  expect(lowerVal.textContent).toBe('1')
+  // 9MS0+1MS/
+  clickSeriesOfButtons('9MS0+1MS/')
+  expect(expression.textContent).toBe('0+1/')
+  expect(lowerVal.textContent).toBe('1')
+  // 9MS1+2=.MS-
+  clickSeriesOfButtons('9MS1+2=.MS-')
+  expect(expression.textContent).toBe('0-')
+  expect(lowerVal.textContent).toBe('0')
+  // 9MS1+2=+MS+
+  clickSeriesOfButtons('9MS1+2=+MS+')
+  expect(expression.textContent).toBe('3+')
+  expect(lowerVal.textContent).toBe('3')
+  // 9MS1+2MS8+MS+
+  clickSeriesOfButtons('9MS1+2MS8+MS+')
+  expect(expression.textContent).toBe('1+8+')
+  expect(lowerVal.textContent).toBe('9')
+})
+
+test('MS cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
   // 9MS1+2MS7
   clickSeriesOfButtons('9MS1+2MS7')
   expect(expression.textContent).toBe('1+')
   expect(lowerVal.textContent).toBe('7')
+})
+
+test('toggle sign cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
+  // 5*9=pm=
+  clickSeriesOfButtons('5*9=pm=')
+  expect(expression.textContent).toBe('-45*9')
+  expect(lowerVal.textContent).toBe('-405')
+  // 5*9=pm-
+  clickSeriesOfButtons('5*9=pm-')
+  expect(expression.textContent).toBe('-45-')
+  expect(lowerVal.textContent).toBe('-45')
+  // =
+  clickSeriesOfButtons('=', false)
+  expect(expression.textContent).toBe('-45--45')
+  expect(lowerVal.textContent).toBe('0')
 })
