@@ -89,7 +89,7 @@ main {
   position: absolute;
   left: 4px;
   bottom: 8px;
-  display: none;
+  /* display: none; */
 }
 .error {
   min-height: 12px;

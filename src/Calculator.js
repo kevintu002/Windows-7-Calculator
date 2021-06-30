@@ -8,8 +8,28 @@ export default function Calculator() {
   const [expression, setExpression] = useState([])
   const [lowerVal, setLowerVal] = useState('0')
   const [prevKey, setPrevKey] = useState(null)
-
+  const [mem, setMem] = useState('0')
   const operRegEx = new RegExp('\\+|-|\\*|\\/')
+
+  const MClear = () => {
+    setMem('0')
+  }
+
+  const MRetrieve = () => {
+    setLowerVal(mem)
+  }
+
+  const MStore = () => {
+    setMem(lowerVal)
+  }
+
+  const MAdd = () => {
+    setMem(myEval([mem, '+', lowerVal]))
+  }
+
+  const MSubtract = () => {
+    setMem(myEval([mem, '-', lowerVal]))
+  }
 
   const handleClear = () => {
     setExpression([])
@@ -177,18 +197,23 @@ export default function Calculator() {
 
   return (
     <div className="calculator" >
+      <div className="menu"><span>V</span>iew&nbsp;&nbsp; <span>E</span>dit&nbsp;&nbsp; <span>H</span>elp</div>
       <div className="display">
         <CalcDisplay upperVal={expression} lowerVal={lowerVal} />
+        <div className="error"></div>
+        <div className="m-icon">{mem !== '0' ? 'M' : ''}</div>
       </div>
       <div className="keyboard">
       </div>
       <div className="keyboard-bot">
+        <CalcKey name="MC" onClick={MClear}/><CalcKey name="MR" onClick={MRetrieve}/><CalcKey name="MS" onClick={MStore}/><CalcKey name="M+" onClick={MAdd}/><CalcKey name="M-" onClick={MSubtract}/><br/>
         <CalcKey name="Del" onClick={handleDelete}/><CalcKey name="CE" onClick={handleClearEntry}/><CalcKey name="C" onClick={handleClear}/><CalcKey name="±" onClick={toggleSign}/><CalcKey name="√" onClick={handleSqrt}/><br/>
         <CalcKey name="7" onClick={handleDigit}/><CalcKey name="8" onClick={handleDigit}/><CalcKey name="9" onClick={handleDigit}/><CalcKey name="/" onClick={handleOperator}/><CalcKey name="%" onClick={handlePercent} /><br/>
         <CalcKey name="4" onClick={handleDigit}/><CalcKey name="5" onClick={handleDigit}/><CalcKey name="6" onClick={handleDigit}/><CalcKey name="*" onClick={handleOperator}/><CalcKey name="1/x" onClick={handleInverse} /><br/>
         <CalcKey name="1" onClick={handleDigit}/><CalcKey name="2" onClick={handleDigit}/><CalcKey name="3" onClick={handleDigit}/><CalcKey name="-" onClick={handleOperator}/><br/>
         <CalcKey name="0" onClick={handleDigit}/><CalcKey name="." onClick={handleDot}/><CalcKey name="+" onClick={handleOperator}/><CalcKey name="=" onClick={handleEqual}/>
       </div>
+      
     </div>
   );
 }
