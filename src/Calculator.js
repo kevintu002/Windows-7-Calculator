@@ -98,13 +98,14 @@ export default function Calculator() {
   const handleDigit = ({target}) => {
     const newDigit = target.name;
 
-    if (!['=', 'MR', 'MS'].includes(prevKey) && !operRegEx.test(prevKey)) {
+    if (!['=', 'MR', 'MS', 'hist'].includes(prevKey) && !operRegEx.test(prevKey)) {
       // overwrite 0. otherwise, append
       setLowerVal(prev => prev === '0' ? newDigit : prev + newDigit)
     } else {
       // next input overwrites lowerVal
       if (prevKey === '=')
         setExpression([])
+      
       setLowerVal(newDigit)
     }
 
@@ -113,14 +114,13 @@ export default function Calculator() {
 
   const handleOperator = ({target}) => {
     const newOperator = target.name
+    let newExpression = expression
+    let newLowerVal = lowerVal
     
     if (operRegEx.test(prevKey)) {
       // replace operator
-      setExpression(prev => [...prev.slice(0,-1), newOperator])
-    } else if (['.', 'CE', 'toggleSign', 'MR'].includes(prevKey)) {
-      let newLowerVal = lowerVal
-      let newExpression
-
+      newExpression = [...expression.slice(0,-1), newOperator]
+    } else if (['.', 'CE', 'toggleSign', 'MR', 'hist'].includes(prevKey)) {
       // remove dot
       if (lowerVal.slice(-1)[0] === '.')
         newLowerVal = lowerVal.slice(0,-1)
@@ -131,22 +131,22 @@ export default function Calculator() {
         newExpression = [newLowerVal]
       }
 
-      setExpression([...newExpression, newOperator])
-      setLowerVal(myEval(newExpression))
+      newLowerVal = myEval(newExpression)
+      newExpression = newExpression.concat(newOperator)
     } else if (prevKey === '=') {
       // append to existing expression
-      const newResult = myEval(expression)
-
-      setExpression([newResult, newOperator])
-      setLowerVal(newResult)
+      newLowerVal = myEval(expression)
+      newExpression = [newLowerVal, newOperator]
     } else {
       // evaluate and display current expression with new operator
-      const newExpression = [...expression, lowerVal]
+      const oldExpression = [...expression, lowerVal]
 
-      setExpression([...newExpression, newOperator])
-      setLowerVal(myEval(newExpression))
+      newLowerVal = myEval(oldExpression)
+      newExpression = oldExpression.concat(newOperator)      
     }
 
+    setExpression(newExpression)
+    setLowerVal(newLowerVal)
     setPrevKey(newOperator)
   }
 
@@ -157,20 +157,18 @@ export default function Calculator() {
   const handleEqual = () => {
     // console.log('expression: ' + expression)
     // console.log('prevKey: ' + prevKey)
-    let newExpression
+    let newExpression = expression
+    let newLowerVal = lowerVal
 
     if (!operRegEx.test(expression)) {
       if (prevKey !== '.') {
-        setExpression([lowerVal])
+        newExpression = [lowerVal]
       } else {
         // remove dot from expression and lowerVal
-        setExpression([lowerVal.slice(0,-1)])
-        setLowerVal(prev => prev.slice(0,-1))
+        newExpression = [lowerVal.slice(0,-1)]
+        newLowerVal = lowerVal.slice(0,-1)
       }
-    } else if (['.', 'CE', 'toggleSign', 'MR'].includes(prevKey)) {
-      let newLowerVal = lowerVal
-      let newExpression
-
+    } else if (['.', 'CE', 'toggleSign', 'MR', 'hist'].includes(prevKey)) {
       // remove dot
       if (lowerVal.slice(-1)[0] === '.')
         newLowerVal = lowerVal.slice(0,-1)
@@ -185,42 +183,48 @@ export default function Calculator() {
         newExpression = [newLowerVal, lastOperator, lastOperand]
       } 
 
-      setExpression(newExpression)
-      setLowerVal(myEval(newExpression))
+      newLowerVal = myEval(newExpression)
     } else if (prevKey === '=') {
       // repeat last operator and operand
       const [lastOperator, lastOperand] = expression.slice(-2)
-      const newResult = myEval([...expression, lastOperator, lastOperand])
 
-      setExpression([lowerVal, lastOperator, lastOperand])
-      setLowerVal(newResult)
+      newExpression = [lowerVal, lastOperator, lastOperand]
+      newLowerVal = myEval([...expression, lastOperator, lastOperand])
     } else { // just append
-      // console.log(`${history}`)
-      setHistory([...history , [[...expression, lowerVal].join(''), myEval([...expression, lowerVal])] ])
-      setExpression([...expression, lowerVal])
-      setLowerVal(myEval([...expression, lowerVal]))
+      newExpression = [...expression, lowerVal]
+      newLowerVal = myEval(newExpression)
     }
 
-    // setHistory(history.push({}))
+    setHistory([...history, [newExpression.join(''), newLowerVal] ])
+    setExpression(newExpression)
+    setLowerVal(newLowerVal)
     setPrevKey('=')
+  }
+
+  const handleHistory = (val) => () => {
+    setLowerVal(val)
+    setPrevKey('hist')
   }
 
   return (
     <main className="calculator" >
       <div className="menu"><span>V</span>iew&nbsp;&nbsp; <span>E</span>dit&nbsp;&nbsp; <span>H</span>elp</div>
+
       <div className="display">
         <div className="outer-div">
-          {history.slice(-5).map((i, index) => {
-            return <div key={index} className="history">{i[0]}</div>
-          })}
+          {history.slice(-5).map((i, index) =>
+            <div className="history" key={index} onClick={handleHistory(i[1])}>{i[0]}</div>
+          )}
         </div>
         
         <CalcDisplay upperVal={expression} lowerVal={lowerVal} />
         <div className="error">{errorMsg}</div>
         <div className="m-icon">{mem !== '0' ? 'M' : ''}</div>
       </div>
+
       <div className="keyboard">
       </div>
+
       <div className="keyboard-bot">
         <CalcKey name="MC" onClick={MClear}/><CalcKey name="MR" onClick={MRetrieve}/><CalcKey name="MS" onClick={MStore}/><CalcKey name="M+" onClick={MAdd}/><CalcKey name="M-" onClick={MSubtract}/><br/>
         <CalcKey name="Del" onClick={handleDelete}/><CalcKey name="CE" onClick={handleClearEntry}/><CalcKey name="C" onClick={handleClear}/><CalcKey name="±" onClick={toggleSign}/><CalcKey name="√" onClick={handleSqrt}/><br/>
