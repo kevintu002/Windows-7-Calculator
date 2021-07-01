@@ -22,7 +22,8 @@ export default function Calculator() {
 
   const MStore = () => {
     setMem(lowerVal)
-    setPrevKey('MS')
+    if (!isNaN(prevKey))
+      setPrevKey('MS')
   }
 
   const MAdd = () => {
@@ -104,7 +105,7 @@ export default function Calculator() {
     if (operRegEx.test(prevKey)) {
       // replace operator
       setExpression(prev => [...prev.slice(0,-1), newOperator])
-    } else if (['.', 'CE', 'toggleSign', 'MR', 'MS'].includes(prevKey)) {
+    } else if (['.', 'CE', 'toggleSign', 'MR'].includes(prevKey)) {
       let newLowerVal = lowerVal
       let newExpression
 
@@ -118,8 +119,8 @@ export default function Calculator() {
         newExpression = [newLowerVal]
       }
 
-      setLowerVal(myEval(newExpression))
       setExpression([...newExpression, newOperator])
+      setLowerVal(myEval(newExpression))
     } else if (prevKey === '=') {
       // append to existing expression
       const newResult = myEval(expression)
@@ -153,7 +154,7 @@ export default function Calculator() {
         setExpression([lowerVal.slice(0,-1)])
         setLowerVal(prev => prev.slice(0,-1))
       }
-    } else if (['.', 'CE', 'toggleSign', 'MR', 'MS'].includes(prevKey)) {
+    } else if (['.', 'CE', 'toggleSign', 'MR'].includes(prevKey)) {
       let newLowerVal = lowerVal
       let newExpression
 

@@ -506,21 +506,10 @@ test('handleOperator: MSoperator cases', () => {
   clickSeriesOfButtons('9MS1+2=+MS+')
   expect(expression.textContent).toBe('3+')
   expect(lowerVal.textContent).toBe('3')
-  // 9MS1+2MS8+MS+
-  clickSeriesOfButtons('9MS1+2MS8+MS+')
-  expect(expression.textContent).toBe('1+8+')
+  // 9MS1+2MS8+MS-
+  clickSeriesOfButtons('9MS1+2MS8+MS-')
+  expect(expression.textContent).toBe('1+8-')
   expect(lowerVal.textContent).toBe('9')
-})
-
-test('MS cases', () => {
-  render(<Calculator />);
-  const expression = screen.getByTestId('expression')
-  const lowerVal = screen.getByTestId('lowerVal')
-
-  // 9MS1+2MS7
-  clickSeriesOfButtons('9MS1+2MS7')
-  expect(expression.textContent).toBe('1+')
-  expect(lowerVal.textContent).toBe('7')
 })
 
 test('toggle sign cases', () => {
