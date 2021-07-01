@@ -121,6 +121,8 @@ export default function Calculator() {
       // replace operator
       newExpression = [...expression.slice(0,-1), newOperator]
     } else if (['.', 'CE', 'toggleSign', 'MR', 'hist'].includes(prevKey)) {
+      // existing expression with last item as operator will append the lower value and the newOperator
+      // otherwise replace the expression with the evaluation and the newOperator
       // remove dot
       if (lowerVal.slice(-1)[0] === '.')
         newLowerVal = lowerVal.slice(0,-1)
@@ -169,6 +171,8 @@ export default function Calculator() {
         newLowerVal = lowerVal.slice(0,-1)
       }
     } else if (['.', 'CE', 'toggleSign', 'MR', 'hist'].includes(prevKey)) {
+      // existing expression with last item as operator will append the lowerVal to expression 
+      // otherwise repeat expression on the lowerVal
       // remove dot
       if (lowerVal.slice(-1)[0] === '.')
         newLowerVal = lowerVal.slice(0,-1)
@@ -190,7 +194,8 @@ export default function Calculator() {
 
       newExpression = [lowerVal, lastOperator, lastOperand]
       newLowerVal = myEval([...expression, lastOperator, lastOperand])
-    } else { // just append
+    } else {
+      // just append
       newExpression = [...expression, lowerVal]
       newLowerVal = myEval(newExpression)
     }
@@ -202,8 +207,10 @@ export default function Calculator() {
   }
 
   const handleHistory = (val) => () => {
-    setLowerVal(val)
-    setPrevKey('hist')
+    if (val !== '') {
+      setLowerVal(val)
+      setPrevKey('hist')
+    }
   }
 
   return (
