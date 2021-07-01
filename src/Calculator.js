@@ -1,7 +1,7 @@
 import './css/style.css';
 import CalcDisplay from './components/CalcDisplay';
 import CalcKey from './components/CalcKey';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { evaluate } from 'mathjs';
 
 export default function Calculator() {
@@ -9,7 +9,18 @@ export default function Calculator() {
   const [lowerVal, setLowerVal] = useState('0')
   const [prevKey, setPrevKey] = useState(null)
   const [mem, setMem] = useState('0')
+  const [errorMsg, setErrorMsg] = useState('')
+  const [history, setHistory] = useState([ ['', ''], ['', ''], ['', ''], ['', ''], ['', '']])
   const operRegEx = new RegExp('\\+|-|\\*|\\/')
+
+  useEffect(() => {
+    if (lowerVal === 'Infinity') {
+      setExpression([])
+      setLowerVal('0')
+      setPrevKey(null)
+      setErrorMsg('Cannot divide by zero')
+    }
+  }, [lowerVal])
 
   const MClear = () => {
     setMem('0')
@@ -38,6 +49,7 @@ export default function Calculator() {
     setExpression([])
     setLowerVal('0')
     setPrevKey(null)
+    setErrorMsg('')
   }
 
   const handleClearEntry = () => {
@@ -145,6 +157,7 @@ export default function Calculator() {
   const handleEqual = () => {
     // console.log('expression: ' + expression)
     // console.log('prevKey: ' + prevKey)
+    let newExpression
 
     if (!operRegEx.test(expression)) {
       if (prevKey !== '.') {
@@ -182,10 +195,13 @@ export default function Calculator() {
       setExpression([lowerVal, lastOperator, lastOperand])
       setLowerVal(newResult)
     } else { // just append
+      // console.log(`${history}`)
+      setHistory([...history , [[...expression, lowerVal].join(''), myEval([...expression, lowerVal])] ])
       setExpression([...expression, lowerVal])
       setLowerVal(myEval([...expression, lowerVal]))
     }
 
+    // setHistory(history.push({}))
     setPrevKey('=')
   }
 
@@ -193,8 +209,14 @@ export default function Calculator() {
     <main className="calculator" >
       <div className="menu"><span>V</span>iew&nbsp;&nbsp; <span>E</span>dit&nbsp;&nbsp; <span>H</span>elp</div>
       <div className="display">
+        <div className="outer-div">
+          {history.slice(-5).map((i, index) => {
+            return <div key={index} className="history">{i[0]}</div>
+          })}
+        </div>
+        
         <CalcDisplay upperVal={expression} lowerVal={lowerVal} />
-        <div className="error"></div>
+        <div className="error">{errorMsg}</div>
         <div className="m-icon">{mem !== '0' ? 'M' : ''}</div>
       </div>
       <div className="keyboard">

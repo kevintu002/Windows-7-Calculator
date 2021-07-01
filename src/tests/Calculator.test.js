@@ -529,4 +529,8 @@ test('toggle sign cases', () => {
   clickSeriesOfButtons('=', false)
   expect(expression.textContent).toBe('-45--45')
   expect(lowerVal.textContent).toBe('0')
+  // 5+pm5
+  clickSeriesOfButtons('5+pm5')
+  expect(expression.textContent).toBe('5+')
+  expect(lowerVal.textContent).toBe('-55')
 })

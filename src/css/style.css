@@ -58,6 +58,7 @@ main {
 .display div {
   color: black;
   text-align: right;
+  /* word-wrap: break-word; */
 }
 
 .outer-div {
@@ -72,6 +73,12 @@ main {
   float:right;
 }
 
+.history {
+  font-size: 11px;
+  letter-spacing: 2px;
+  min-height: 15px;
+  border-bottom: 1px dotted black;
+}
 .sm-text {
   font-size: 11px;
   letter-spacing: 2px;
