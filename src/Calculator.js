@@ -2,7 +2,7 @@ import './css/style.css';
 import CalcDisplay from './components/CalcDisplay';
 import CalcKey from './components/CalcKey';
 import { useEffect, useState } from 'react';
-import { evaluate } from 'mathjs';
+import { evaluate, forEach } from 'mathjs';
 
 export default function Calculator() {
   const [expression, setExpression] = useState([])
@@ -22,6 +22,10 @@ export default function Calculator() {
       setErrorMsg('Cannot divide by zero')
     }
   }, [lowerVal])
+
+  useEffect(() => {
+    // document.addEventListener('keypress', document.getElementById('keypress').click())
+  }, [])
 
   const MClear = () => {
     setMem('0')
@@ -153,6 +157,7 @@ export default function Calculator() {
       newExpression = oldExpression.concat(newOperator)
     }
 
+    // state updates
     setExpression(newExpression)
     setLowerVal(newLowerVal)
     setPrevKey(newOperator)
@@ -206,12 +211,21 @@ export default function Calculator() {
       newLowerVal = myEval(newExpression)
     }
 
+    // state updates
     if (cursor !== null)
       setHistoryBGColorOf(cursor, 'transparent')
     setCursor(4)
     setHistoryBGColorOf(4, 'lightblue')
 
-    setHistory([...history, [newExpression.join(''), newLowerVal]])
+    // edit history directly until length is >5
+    let tempHistory = history.filter(i => i[0] === ' ' && i[1] === ' ')
+    let newHistory = history
+    if (tempHistory.length <= 5) {
+      newHistory[5 - tempHistory.length] = [newExpression.join(''), newLowerVal]
+    } else {
+      newHistory = newHistory.concat([newExpression.join(''), newLowerVal])
+    }
+    setHistory(newHistory)
     setExpression(newExpression)
     setLowerVal(newLowerVal)
     setPrevKey('=')
@@ -221,7 +235,7 @@ export default function Calculator() {
     return document.getElementsByClassName('history')[index].style.backgroundColor = color
   }
 
-  const handleHistory = (val, index) => ({target}) => {
+  const handleHistory = (val, index) => () => {
     if (val !== '') {
       setLowerVal(val)
       setPrevKey('hist')
@@ -250,8 +264,7 @@ export default function Calculator() {
               onClick={handleHistory(i[1], index)}
               style={{
                 // all border-bottom should be 1px dotted except for the last one
-                borderBottom: i[1] !== ' ' && i[0] !== ' ' && index !== 4 ? '1px dotted black': '1px solid transparent', 
-                target: '15px solid blue'
+                borderBottom: i[1] !== ' ' && i[0] !== ' ' && index !== 4 ? '1px dotted black': '1px solid transparent'
               }}
             >{i[0]}</div>
           )}
