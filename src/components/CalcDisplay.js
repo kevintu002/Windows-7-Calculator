@@ -3,7 +3,7 @@ import React from 'react';
 export default function CalcDisplay({upperVal, lowerVal}) {
   return (
     <div>
-      <div className="outer-div">
+      <div className="outer-div expression">
         <div className="inner-div sm-text" data-testid="expression">{upperVal}</div>
       </div>
       <div className="outer-div">

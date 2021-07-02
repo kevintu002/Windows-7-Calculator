@@ -78,7 +78,16 @@ main {
   font-size: 11px;
   letter-spacing: 2px;
   min-height: 15px;
-  border-bottom: 1px dotted black;
+  /* border-bottom: 1px solid transparent; */
+}
+/* .history:focus {
+  background-color: black;
+} */
+/* .history:last-child {
+  border-bottom: 0px;
+} */
+.expression {
+  border-top: 1px solid lightgrey;
 }
 .sm-text {
   font-size: 11px;
