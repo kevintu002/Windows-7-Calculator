@@ -23,10 +23,6 @@ export default function Calculator() {
     }
   }, [lowerVal])
 
-  useEffect(() => {
-    // document.addEventListener('keypress', document.getElementById('keypress').click())
-  }, [])
-
   const MClear = () => {
     setMem('0')
   }
@@ -210,11 +206,10 @@ export default function Calculator() {
     }
 
     // state updates
-    
     let allEmptyHistories = history.filter(i => i[0] === ' ' && i[1] === ' ')
     let newHistory = history
     if (allEmptyHistories.length !== 0) {
-      // edit history directly when length is > 0
+      // edit history directly when there exists empty expressions
       newHistory[5 - allEmptyHistories.length] = [newExpression.join(''), newLowerVal]
       setCursor(5 - allEmptyHistories.length)
       setHistoryBGColorOf(5 - allEmptyHistories.length, 'lightblue')
@@ -223,7 +218,6 @@ export default function Calculator() {
       setCursor(4)
       setHistoryBGColorOf(4, 'lightblue')
     }
-    
     setHistory(newHistory)
     setExpression(newExpression)
     setLowerVal(newLowerVal)
@@ -231,11 +225,25 @@ export default function Calculator() {
   }
 
   const setHistoryBGColorOf = (index, color) => {
-    document.getElementsByClassName('history')[index].style.backgroundColor = color
+    const historyPointer = document.getElementsByClassName('history')[index].style
+    if (historyPointer)
+      historyPointer.backgroundColor = color
   }
 
   const setHistoryIndexColor = (index, color) => {
-    document.getElementsByClassName('history')[index].style.color = color
+    const historyPointer = document.getElementsByClassName('history')[index].style
+    if (historyPointer)
+      historyPointer.color = color
+  }
+
+  const setToSelected = (index) => {
+    setHistoryIndexColor(index, 'white')
+    setHistoryBGColorOf(index, 'rgb(102, 132, 146)')
+  }
+
+  const setToUnselected = (index) => {
+    setHistoryIndexColor(index, 'black')
+    setHistoryBGColorOf(index, 'transparent')
   }
 
   const handleHistory = (val, index) => () => {
@@ -244,8 +252,9 @@ export default function Calculator() {
       setPrevKey('hist')
 
       if (cursor !== null) {
-        setHistoryIndexColor(index, 'white')
-        setHistoryBGColorOf(index, 'rgb(102, 132, 146)')
+        setToSelected(index)
+        // setHistoryIndexColor(index, 'white')
+        // setHistoryBGColorOf(index, 'rgb(102, 132, 146)')
         setCursor(index)
       }
     }
@@ -255,28 +264,67 @@ export default function Calculator() {
     return () => {
       if (cursor !== null) {
         // resets previous cursor style to default
-        setHistoryIndexColor(cursor, 'black')
-        setHistoryBGColorOf(cursor, 'transparent')
+        setToUnselected(cursor)
+        // setHistoryIndexColor(cursor, 'black')
+        // setHistoryBGColorOf(cursor, 'transparent')
       }
     }
   }, [cursor])
 
-  useEffect(() => {
-    function handleKeyPress() {
-      console.log()
-      alert('hi')
-      // if (this.name === '1') {
-      //   alert('hi')
-      // }
+  const moveCursorUp = () => {
+    if (cursor !== 0) {
+      setCursor(prev => prev - 1)
+      setToSelected(cursor - 1)
     }
-    // if (target.key === '1') {
-    //   alert('hi')
-    // }
-    // alert('hi')
-    document.addEventListener('onKeyPress', handleKeyPress)
-    // return function cleanup() {
-    //   document.removeEventListener('onKeyPress', handleKeyPress)
-    // }
+  }
+
+  // enter-> equal, r-> inverse, pgup/pgdown->up/down, 
+  // up/down->cursor up/down, f1->help, f2-> edit current cursor
+  // copy+paste
+  const handleKeyPress = (e) => {
+    const key = e.key
+    console.log(key)
+    const ctrlKeyMap = {
+
+    }
+    const shiftKeyMap = {
+      Enter: 'MS'
+    }
+    const keyMap = {
+      Enter: '=',
+      r: '',
+      PageUp: '',
+      PageDown: '',
+      ArrowUp: '',
+      ArrowDown: '',
+      Escape: 'C',
+      Delete: 'CE',
+      F9: '±'
+    }
+    try {
+      if (e.ctrlKey && key in ctrlKeyMap) {
+        // ctrl key modifier
+        if (key === 'c') {
+
+        } else if (key === 'v') {
+
+        }
+      } else if (e.shiftKey && key in shiftKeyMap) {
+        // shift key modifier
+        document.getElementById(shiftKeyMap[key]).click()
+      } else if (key in keyMap) {
+        document.getElementById(keyMap[key]).click()
+      } else {
+        document.getElementById(key).click()
+      }
+    } catch (error) {
+      console.log(error)
+      console.log(`input was not mapped`)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('keyup', handleKeyPress)
   }, [])
 
   return (
@@ -302,6 +350,8 @@ export default function Calculator() {
         <div className="error">{errorMsg}</div>
         <div className="m-icon">{mem !== '0' ? 'M' : ''}</div>
       </div>
+
+
 
       <div className="keyboard">
       </div>
