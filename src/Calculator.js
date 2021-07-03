@@ -225,9 +225,8 @@ export default function Calculator() {
     } else {
       newHistory = newHistory.concat([[newExpression.join(''), newLowerVal]])
       setCursor(4)
-      setHistoryBGColorOf(cursor, 'lightblue')
+      setHistoryBGColorOf(4, 'lightblue')
     }
-    
     setHistory(newHistory)
     setExpression(newExpression)
     setLowerVal(newLowerVal)
@@ -244,7 +243,7 @@ export default function Calculator() {
       setPrevKey('hist')
       if (cursor !== null) {
         setHistoryBGColorOf(cursor, 'transparent')
-        setHistoryBGColorOf(index, 'lightblue')
+        setHistoryBGColorOf(index, 'rgb(102, 132, 146)')
         setCursor(index)
       }
     }
@@ -267,7 +266,8 @@ export default function Calculator() {
               onClick={handleHistory(i[1], index)}
               style={{
                 // all border-bottom should be 1px dotted except for the last one
-                borderBottom: i[1] !== ' ' && i[0] !== ' ' && index !== 4 ? '1px dotted black': '1px solid transparent'
+                borderBottom: i[1] !== ' ' && i[0] !== ' ' && index !== 4 ? '1px dotted black': '1px solid transparent',
+                color: cursor === index ? 'white' : 'black'
               }}
             >{i[0]}</div>
           )}
