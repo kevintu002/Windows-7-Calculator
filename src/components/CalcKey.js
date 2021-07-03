@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default function CalcKey({name, onClick, onKeyPress}) {
+export default function CalcKey({name, onClick}) {
   return (
-    <button id={name} name={name} onClick={onClick} onKeyPress={onKeyPress}>{name}</button>
+    <button id={name} name={name} onClick={onClick}>{name}</button>
   )
 }

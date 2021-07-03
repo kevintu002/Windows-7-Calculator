@@ -106,7 +106,7 @@ export default function Calculator() {
   }
 
   const handleDigit = ({target}) => {
-    const newDigit = target.name;
+    const newDigit = target.name
 
     if (!['=', 'MR', 'MS', 'hist'].includes(prevKey) && !operRegEx.test(prevKey)) {
       // overwrite 0. otherwise, append
@@ -168,8 +168,6 @@ export default function Calculator() {
   }
 
   const handleEqual = () => {
-    // console.log('expression: ' + expression)
-    // console.log('prevKey: ' + prevKey)
     let newExpression = expression
     let newLowerVal = lowerVal
 
@@ -212,13 +210,11 @@ export default function Calculator() {
     }
 
     // state updates
-    if (cursor !== null)
-      setHistoryBGColorOf(cursor, 'transparent')
     
-    // edit history directly until length is >5
     let allEmptyHistories = history.filter(i => i[0] === ' ' && i[1] === ' ')
     let newHistory = history
     if (allEmptyHistories.length !== 0) {
+      // edit history directly when length is > 0
       newHistory[5 - allEmptyHistories.length] = [newExpression.join(''), newLowerVal]
       setCursor(5 - allEmptyHistories.length)
       setHistoryBGColorOf(5 - allEmptyHistories.length, 'lightblue')
@@ -227,6 +223,7 @@ export default function Calculator() {
       setCursor(4)
       setHistoryBGColorOf(4, 'lightblue')
     }
+    
     setHistory(newHistory)
     setExpression(newExpression)
     setLowerVal(newLowerVal)
@@ -234,27 +231,56 @@ export default function Calculator() {
   }
 
   const setHistoryBGColorOf = (index, color) => {
-    return document.getElementsByClassName('history')[index].style.backgroundColor = color
+    document.getElementsByClassName('history')[index].style.backgroundColor = color
+  }
+
+  const setHistoryIndexColor = (index, color) => {
+    document.getElementsByClassName('history')[index].style.color = color
   }
 
   const handleHistory = (val, index) => () => {
     if (val !== ' ') {
       setLowerVal(val)
       setPrevKey('hist')
+
       if (cursor !== null) {
-        setHistoryBGColorOf(cursor, 'transparent')
+        setHistoryIndexColor(index, 'white')
         setHistoryBGColorOf(index, 'rgb(102, 132, 146)')
         setCursor(index)
       }
     }
   }
 
-  const handleKeyPress = ({target}) => {
+  useEffect(() => {
+    return () => {
+      if (cursor !== null) {
+        // resets previous cursor style to default
+        setHistoryIndexColor(cursor, 'black')
+        setHistoryBGColorOf(cursor, 'transparent')
+      }
+    }
+  }, [cursor])
 
-  }
+  useEffect(() => {
+    function handleKeyPress() {
+      console.log()
+      alert('hi')
+      // if (this.name === '1') {
+      //   alert('hi')
+      // }
+    }
+    // if (target.key === '1') {
+    //   alert('hi')
+    // }
+    // alert('hi')
+    document.addEventListener('onKeyPress', handleKeyPress)
+    // return function cleanup() {
+    //   document.removeEventListener('onKeyPress', handleKeyPress)
+    // }
+  }, [])
 
   return (
-    <main className="calculator" >
+    <main className="calculator">
       <div className="menu"><span>V</span>iew&nbsp;&nbsp; <span>E</span>dit&nbsp;&nbsp; <span>H</span>elp</div>
 
       <div className="display">
@@ -265,9 +291,8 @@ export default function Calculator() {
               className="history" 
               onClick={handleHistory(i[1], index)}
               style={{
-                // all border-bottom should be 1px dotted except for the last one
-                borderBottom: i[1] !== ' ' && i[0] !== ' ' && index !== 4 ? '1px dotted black': '1px solid transparent',
-                color: cursor === index ? 'white' : 'black'
+                // all border-bottom should be 1px dotted except for the last one and blank expressions
+                borderBottom: i[1] !== ' ' && i[0] !== ' ' && index !== 4 ? '1px dotted black': '1px solid transparent'
               }}
             >{i[0]}</div>
           )}
@@ -282,13 +307,40 @@ export default function Calculator() {
       </div>
 
       <div className="keyboard-bot">
-        <CalcKey name="MC" onClick={MClear}/><CalcKey name="MR" onClick={MRetrieve}/><CalcKey name="MS" onClick={MStore}/><CalcKey name="M+" onClick={MAdd}/><CalcKey name="M-" onClick={MSubtract}/><br/>
-        <CalcKey name="Del" onClick={handleDelete}/><CalcKey name="CE" onClick={handleClearEntry}/><CalcKey name="C" onClick={handleClear}/><CalcKey name="±" onClick={toggleSign}/><CalcKey name="√" onClick={handleSqrt}/><br/>
-        <CalcKey name="7" onClick={handleDigit}/><CalcKey name="8" onClick={handleDigit}/><CalcKey name="9" onClick={handleDigit}/><CalcKey name="/" onClick={handleOperator}/><CalcKey name="%" onClick={handlePercent} /><br/>
-        <CalcKey name="4" onClick={handleDigit}/><CalcKey name="5" onClick={handleDigit}/><CalcKey name="6" onClick={handleDigit}/><CalcKey name="*" onClick={handleOperator}/><CalcKey name="1/x" onClick={handleInverse} /><br/>
-        <CalcKey name="1" onClick={handleDigit} onKeyPress={handleKeyPress}/><CalcKey name="2" onClick={handleDigit}/><CalcKey name="3" onClick={handleDigit}/><CalcKey name="-" onClick={handleOperator}/><br/>
-        <CalcKey name="0" onClick={handleDigit}/><CalcKey name="." onClick={handleDot}/><CalcKey name="+" onClick={handleOperator}/><CalcKey name="=" onClick={handleEqual}/>
+        <CalcKey name="MC" onClick={MClear}/>
+        <CalcKey name="MR" onClick={MRetrieve}/>
+        <CalcKey name="MS" onClick={MStore}/>
+        <CalcKey name="M+" onClick={MAdd}/>
+        <CalcKey name="M-" onClick={MSubtract}/><br/>
+
+        <CalcKey name="Del" onClick={handleDelete}/>
+        <CalcKey name="CE" onClick={handleClearEntry}/>
+        <CalcKey name="C" onClick={handleClear}/>
+        <CalcKey name="±" onClick={toggleSign}/>
+        <CalcKey name="√" onClick={handleSqrt}/><br/>
+
+        <CalcKey name="7" onClick={handleDigit}/>
+        <CalcKey name="8" onClick={handleDigit}/>
+        <CalcKey name="9" onClick={handleDigit}/>
+        <CalcKey name="/" onClick={handleOperator}/>
+        <CalcKey name="%" onClick={handlePercent}/><br/>
+
+        <CalcKey name="4" onClick={handleDigit}/>
+        <CalcKey name="5" onClick={handleDigit}/>
+        <CalcKey name="6" onClick={handleDigit}/>
+        <CalcKey name="*" onClick={handleOperator}/>
+        <CalcKey name="1/x" onClick={handleInverse}/><br/>
+
+        <CalcKey name="1" onClick={handleDigit}/>
+        <CalcKey name="2" onClick={handleDigit}/>
+        <CalcKey name="3" onClick={handleDigit}/>
+        <CalcKey name="-" onClick={handleOperator}/><br/>
+
+        <CalcKey name="0" onClick={handleDigit}/>
+        <CalcKey name="." onClick={handleDot}/>
+        <CalcKey name="+" onClick={handleOperator}/>
+        <CalcKey name="=" onClick={handleEqual}/>
       </div>
     </main>
-  );
+  )
 }
