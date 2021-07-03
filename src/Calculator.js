@@ -23,26 +23,26 @@ export default function Calculator() {
     }
   }, [lowerVal])
 
-  const MClear = () => {
+  const handleMClear = () => {
     setMem('0')
   }
 
-  const MRetrieve = () => {
+  const handleMRetrieve = () => {
     setLowerVal(mem)
     setPrevKey('MR')
   }
 
-  const MStore = () => {
+  const handleMStore = () => {
     setMem(lowerVal)
     if (!isNaN(prevKey))
       setPrevKey('MS')
   }
 
-  const MAdd = () => {
+  const handleMAdd = () => {
     setMem(myEval([mem, '+', lowerVal]))
   }
 
-  const MSubtract = () => {
+  const handleMSubtract = () => {
     setMem(myEval([mem, '-', lowerVal]))
   }
 
@@ -58,7 +58,7 @@ export default function Calculator() {
     setPrevKey('CE')
   }
 
-  const toggleSign = () => {
+  const handleToggleSign = () => {
     setLowerVal(prev => (prev * -1) + '')
     setPrevKey('toggleSign')
   }
@@ -206,7 +206,7 @@ export default function Calculator() {
     }
 
     // state updates
-    let allEmptyHistories = history.filter(i => i[0] === ' ' && i[1] === ' ')
+    let allEmptyHistories = getAllEmptyHistories()
     let newHistory = history
     if (allEmptyHistories.length !== 0) {
       // edit history directly when there exists empty expressions
@@ -224,39 +224,29 @@ export default function Calculator() {
     setPrevKey('=')
   }
 
+  const getAllEmptyHistories = () => {
+    return history.filter(i => i[0] === ' ' && i[1] === ' ')
+  }
+
   const setHistoryBGColorOf = (index, color) => {
-    const historyPointer = document.getElementsByClassName('history')[index].style
+    const historyPointer = document.getElementsByClassName('history')[index]
     if (historyPointer)
-      historyPointer.backgroundColor = color
+      historyPointer.style.backgroundColor = color
   }
 
   const setHistoryIndexColor = (index, color) => {
-    const historyPointer = document.getElementsByClassName('history')[index].style
+    const historyPointer = document.getElementsByClassName('history')[index]
     if (historyPointer)
-      historyPointer.color = color
-  }
-
-  const setToSelected = (index) => {
-    setHistoryIndexColor(index, 'white')
-    setHistoryBGColorOf(index, 'rgb(102, 132, 146)')
-  }
-
-  const setToUnselected = (index) => {
-    setHistoryIndexColor(index, 'black')
-    setHistoryBGColorOf(index, 'transparent')
+      historyPointer.style.color = color
   }
 
   const handleHistory = (val, index) => () => {
-    if (val !== ' ') {
+    if (val !== ' ' && cursor !== null) {
       setLowerVal(val)
       setPrevKey('hist')
-
-      if (cursor !== null) {
-        setToSelected(index)
-        // setHistoryIndexColor(index, 'white')
-        // setHistoryBGColorOf(index, 'rgb(102, 132, 146)')
-        setCursor(index)
-      }
+      setHistoryIndexColor(index, 'white')
+      setHistoryBGColorOf(index, 'rgb(102, 132, 146)')
+      setCursor(index)
     }
   }
 
@@ -264,17 +254,29 @@ export default function Calculator() {
     return () => {
       if (cursor !== null) {
         // resets previous cursor style to default
-        setToUnselected(cursor)
-        // setHistoryIndexColor(cursor, 'black')
-        // setHistoryBGColorOf(cursor, 'transparent')
+        setHistoryIndexColor(cursor, 'black')
+        setHistoryBGColorOf(cursor, 'transparent')
       }
     }
   }, [cursor])
 
   const moveCursorUp = () => {
-    if (cursor !== 0) {
-      setCursor(prev => prev - 1)
-      setToSelected(cursor - 1)
+    if (cursor !== null)
+      if (cursor === 0)
+        handleHistory(history[cursor][1], cursor)()
+      else 
+        handleHistory(history[cursor - 1][1], cursor - 1)()
+  }
+
+  const moveCursorDown = () => {
+    if (cursor !== null) {
+      const nonEmptyHistoryLength = 5 - getAllEmptyHistories().length - 1
+      if (cursor === 4)
+        handleHistory(history[cursor][1], cursor)()
+      else if (cursor === nonEmptyHistoryLength)
+        handleHistory(history[nonEmptyHistoryLength][1], nonEmptyHistoryLength)()
+      else
+        handleHistory(history[cursor + 1][1], cursor + 1)()
     }
   }
 
@@ -285,21 +287,22 @@ export default function Calculator() {
     const key = e.key
     console.log(key)
     const ctrlKeyMap = {
-
+      q: 'M-',
+      p: 'M+'
     }
     const shiftKeyMap = {
       Enter: 'MS'
     }
     const keyMap = {
       Enter: '=',
-      r: '',
-      PageUp: '',
-      PageDown: '',
-      ArrowUp: '',
-      ArrowDown: '',
+      r: '1/x',
       Escape: 'C',
       Delete: 'CE',
-      F9: '±'
+      F9: '±',
+      ArrowUp: 'up',
+      ArrowDown: 'down',
+      PageUp: 'up',
+      PageDown: 'down'
     }
     try {
       if (e.ctrlKey && key in ctrlKeyMap) {
@@ -318,18 +321,26 @@ export default function Calculator() {
         document.getElementById(key).click()
       }
     } catch (error) {
-      console.log(error)
-      console.log(`input was not mapped`)
+      // console.log(error)
+      // console.log(`input was not mapped`)
     }
   }
 
   useEffect(() => {
     document.addEventListener('keyup', handleKeyPress)
-  }, [])
+    return () => {
+      document.removeEventListener('keyup', handleKeyPress)
+    }
+  }, [cursor])
 
   return (
     <main className="calculator">
       <div className="menu"><span>V</span>iew&nbsp;&nbsp; <span>E</span>dit&nbsp;&nbsp; <span>H</span>elp</div>
+
+      <div className="navigation">
+        <CalcKey id="up" onClick={moveCursorUp}/>
+        <CalcKey id="down" onClick={moveCursorDown}/>
+      </div>
 
       <div className="display">
         <div className="outer-div">
@@ -351,22 +362,20 @@ export default function Calculator() {
         <div className="m-icon">{mem !== '0' ? 'M' : ''}</div>
       </div>
 
-
-
       <div className="keyboard">
       </div>
 
       <div className="keyboard-bot">
-        <CalcKey name="MC" onClick={MClear}/>
-        <CalcKey name="MR" onClick={MRetrieve}/>
-        <CalcKey name="MS" onClick={MStore}/>
-        <CalcKey name="M+" onClick={MAdd}/>
-        <CalcKey name="M-" onClick={MSubtract}/><br/>
+        <CalcKey name="MC" onClick={handleMClear}/>
+        <CalcKey name="MR" onClick={handleMRetrieve}/>
+        <CalcKey name="MS" onClick={handleMStore}/>
+        <CalcKey name="M+" onClick={handleMAdd}/>
+        <CalcKey name="M-" onClick={handleMSubtract}/><br/>
 
         <CalcKey name="Del" onClick={handleDelete}/>
         <CalcKey name="CE" onClick={handleClearEntry}/>
         <CalcKey name="C" onClick={handleClear}/>
-        <CalcKey name="±" onClick={toggleSign}/>
+        <CalcKey name="±" onClick={handleToggleSign}/>
         <CalcKey name="√" onClick={handleSqrt}/><br/>
 
         <CalcKey name="7" onClick={handleDigit}/>
