@@ -2,7 +2,7 @@ import './css/style.css';
 import CalcDisplay from './components/CalcDisplay';
 import CalcKey from './components/CalcKey';
 import { useEffect, useState } from 'react';
-import { evaluate, forEach } from 'mathjs';
+import { evaluate } from 'mathjs';
 
 export default function Calculator() {
   const [expression, setExpression] = useState([])
@@ -214,17 +214,20 @@ export default function Calculator() {
     // state updates
     if (cursor !== null)
       setHistoryBGColorOf(cursor, 'transparent')
-    setCursor(4)
-    setHistoryBGColorOf(4, 'lightblue')
-
+    
     // edit history directly until length is >5
-    let tempHistory = history.filter(i => i[0] === ' ' && i[1] === ' ')
+    let allEmptyHistories = history.filter(i => i[0] === ' ' && i[1] === ' ')
     let newHistory = history
-    if (tempHistory.length <= 5) {
-      newHistory[5 - tempHistory.length] = [newExpression.join(''), newLowerVal]
+    if (allEmptyHistories.length !== 0) {
+      newHistory[5 - allEmptyHistories.length] = [newExpression.join(''), newLowerVal]
+      setCursor(5 - allEmptyHistories.length)
+      setHistoryBGColorOf(5 - allEmptyHistories.length, 'lightblue')
     } else {
-      newHistory = newHistory.concat([newExpression.join(''), newLowerVal])
+      newHistory = newHistory.concat([[newExpression.join(''), newLowerVal]])
+      setCursor(4)
+      setHistoryBGColorOf(cursor, 'lightblue')
     }
+    
     setHistory(newHistory)
     setExpression(newExpression)
     setLowerVal(newLowerVal)
@@ -236,7 +239,7 @@ export default function Calculator() {
   }
 
   const handleHistory = (val, index) => () => {
-    if (val !== '') {
+    if (val !== ' ') {
       setLowerVal(val)
       setPrevKey('hist')
       if (cursor !== null) {
