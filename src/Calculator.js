@@ -261,7 +261,7 @@ export default function Calculator() {
   // any key press after history has been selected should modify cursor style
   useEffect(() => {
     if (!['hist', '='].includes(prevKey)) {
-      // resets 
+      // resets cursor focus
       setHistoryIndexColor(cursor, 'black')
       setHistoryBGColorOf(cursor, 'lightblue')
     }
@@ -273,7 +273,7 @@ export default function Calculator() {
 
     return () => {
       if (cursor !== null)
-        // resets previous cursor style
+        // sets previous cursor's style to default
         setToUnselected(cursor)
     }
   })
@@ -323,9 +323,6 @@ export default function Calculator() {
     }
   }
 
-  // enter-> equal, r-> inverse, pgup/pgdown->up/down, 
-  // up/down->cursor up/down, f1->help, f2-> edit current cursor
-  // copy+paste
   const handleKeyPress = (e) => {
     const key = e.key
     console.log(key)
@@ -334,10 +331,13 @@ export default function Calculator() {
       p: 'M+',
       m: 'MS',
       r: 'MR',
-      l: 'MC'
+      l: 'MC',
+      c: 'copy',
+      v: 'paste'
     }
     const shiftKeyMap = {
-      Enter: 'MS'
+      Enter: 'MS',
+      '=': '+'
     }
     const keyMap = {
       Enter: '=',
@@ -355,9 +355,19 @@ export default function Calculator() {
       if (e.ctrlKey && key in ctrlKeyMap) {
         // ctrl key modifier
         if (key === 'c') {
-
+          // navigator.clipboard.writeText(lowerVal)
+          navigator.permissions.query({name: "clipboard-write"}).then(result => {
+            if (result.state === "granted" || result.state === "prompt")
+              navigator.clipboard.writeText(lowerVal)
+          })
         } else if (key === 'v') {
+          navigator.clipboard.readText().then(text => {
+            if (!isNaN(text))
+              return setLowerVal(text)
+            return setLowerVal('0')
+          })
 
+          setPrevKey('paste')
         } else {
           document.getElementById(ctrlKeyMap[key]).click()
         }
@@ -371,6 +381,7 @@ export default function Calculator() {
       }
     } catch (error) {
       // unmapped inputs do nothing
+      // console.log(error)
     }
   }
 
@@ -379,11 +390,13 @@ export default function Calculator() {
     return () => {
       document.removeEventListener('keyup', handleKeyPress)
     }
-  }, [cursor])
+  })
 
   return (
     <main className="calculator">
-      <div className="menu"><span>V</span>iew&nbsp;&nbsp; <span>E</span>dit&nbsp;&nbsp; <span>H</span>elp</div>
+      <div className="menu">
+        <span>V</span>iew&nbsp;&nbsp; <span>E</span>dit&nbsp;&nbsp; <span>H</span>elp
+      </div>
 
       <div className="navigation">
         <CalcKey id="up" onClick={moveCursorUp}/>

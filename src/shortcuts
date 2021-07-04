@@ -1,5 +1,7 @@
 F1	Open Calculator Help
 F2	Edit the calculation history
+Ctrl+C  Copy to Clipboard
+Ctrl+V  Paste to Clipboard
 doneCtrl+Q	Press the M- button
 doneCtrl+P	Press the M+ button
 doneCtrl+M or Shift+Enter	Press the MS button
