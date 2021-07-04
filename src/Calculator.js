@@ -12,6 +12,7 @@ export default function Calculator() {
   const [errorMsg, setErrorMsg] = useState('')
   const [history, setHistory] = useState(Array(5).fill([' ', ' ']))
   const [cursor, setCursor] = useState(null)
+  const [historyStart, setHistoryStart] = useState(0)
   const operRegEx = new RegExp('\\+|-|\\*|\\/')
 
   useEffect(() => {
@@ -212,11 +213,12 @@ export default function Calculator() {
       // edit history directly when there exists empty expressions
       newHistory[5 - allEmptyHistories.length] = [newExpression.join(''), newLowerVal]
       setCursor(5 - allEmptyHistories.length)
-      setHistoryBGColorOf(5 - allEmptyHistories.length, 'lightblue')
+      // setHistoryBGColorOf(5 - allEmptyHistories.length, 'lightblue')
     } else {
       newHistory = newHistory.concat([[newExpression.join(''), newLowerVal]])
       setCursor(4)
-      setHistoryBGColorOf(4, 'lightblue')
+      // setHistoryBGColorOf(4, 'lightblue')
+      setHistoryStart(prev => prev + 1)
     }
     setHistory(newHistory)
     setExpression(newExpression)
@@ -240,17 +242,26 @@ export default function Calculator() {
       historyPointer.style.color = color
   }
 
-  const handleHistory = (val, index) => () => {
-    if (val !== ' ' && cursor !== null) {
-      setLowerVal(val)
+  const setToSelected = (index) => {
+    setHistoryIndexColor(index, 'white')
+    setHistoryBGColorOf(index, 'rgb(102, 132, 146)')
+  }
+
+  // index is always between 0-4
+  const handleHistory = (index) => () => {
+    if (history[index + historyStart][1] !== ' ' && cursor !== null) {
+      setLowerVal(history[index + historyStart][1])
       setPrevKey('hist')
-      setHistoryIndexColor(index, 'white')
-      setHistoryBGColorOf(index, 'rgb(102, 132, 146)')
+      setToSelected(index)
       setCursor(index)
     }
   }
 
   useEffect(() => {
+    if (prevKey === 'hist')
+      setToSelected(cursor)
+    if (prevKey === '=')
+      setHistoryBGColorOf(cursor, 'lightblue')
     return () => {
       if (cursor !== null) {
         // resets previous cursor style to default
@@ -262,21 +273,30 @@ export default function Calculator() {
 
   const moveCursorUp = () => {
     if (cursor !== null)
-      if (cursor === 0)
-        handleHistory(history[cursor][1], cursor)()
-      else 
-        handleHistory(history[cursor - 1][1], cursor - 1)()
+      if (cursor === 0) {
+        if (cursor + historyStart - 1 !== -1) {
+          setHistoryStart(prev => prev - 1)
+          handleHistory((cursor + historyStart) % 5 - 1)
+        }
+        // handleHistory(cursor + historyStart)()
+        // if (historyStart - 1 > -1)
+        //   setHistoryStart(prev => prev - 1)
+      } else {
+        // console.log(`${historyStart}, ${cursor}`)
+        handleHistory(cursor - 1)()
+      }
   }
 
   const moveCursorDown = () => {
     if (cursor !== null) {
       const nonEmptyHistoryLength = 5 - getAllEmptyHistories().length - 1
-      if (cursor === 4)
-        handleHistory(history[cursor][1], cursor)()
-      else if (cursor === nonEmptyHistoryLength)
-        handleHistory(history[nonEmptyHistoryLength][1], nonEmptyHistoryLength)()
-      else
-        handleHistory(history[cursor + 1][1], cursor + 1)()
+      if (cursor === 4) {
+        handleHistory(cursor)()
+      } else if (cursor === nonEmptyHistoryLength) {
+        handleHistory(nonEmptyHistoryLength)()
+      } else {
+        handleHistory(cursor + 1)()
+      }
     }
   }
 
@@ -298,6 +318,7 @@ export default function Calculator() {
       r: '1/x',
       Escape: 'C',
       Delete: 'CE',
+      Backspace: 'Del',
       F9: '±',
       ArrowUp: 'up',
       ArrowDown: 'down',
@@ -311,6 +332,8 @@ export default function Calculator() {
 
         } else if (key === 'v') {
 
+        } else {
+          document.getElementById(ctrlKeyMap[key]).click()
         }
       } else if (e.shiftKey && key in shiftKeyMap) {
         // shift key modifier
@@ -344,11 +367,11 @@ export default function Calculator() {
 
       <div className="display">
         <div className="outer-div">
-          {history.slice(-5).map((i, index) =>
+          {history.slice(historyStart, historyStart + 5).map((i, index) =>
             <div 
               key={index}
               className="history" 
-              onClick={handleHistory(i[1], index)}
+              onClick={handleHistory(index)}
               style={{
                 // all border-bottom should be 1px dotted except for the last one and blank expressions
                 borderBottom: i[1] !== ' ' && i[0] !== ' ' && index !== 4 ? '1px dotted black': '1px solid transparent'
