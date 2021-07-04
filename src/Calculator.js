@@ -242,10 +242,25 @@ export default function Calculator() {
       historyPointer.style.color = color
   }
 
+  // sets index to selected style
   const setToSelected = (index) => {
     setHistoryIndexColor(index, 'white')
     setHistoryBGColorOf(index, 'rgb(102, 132, 146)')
   }
+
+  // sets index to default style
+  const setToUnselected = (index) => {
+    setHistoryIndexColor(index, 'black')
+    setHistoryBGColorOf(index, 'transparent')
+  }
+
+  // any key press after history has been selected should modify cursor style
+  useEffect(() => {
+    if (!['hist', '='].includes(prevKey)) {
+      setHistoryIndexColor(cursor, 'black')
+      setHistoryBGColorOf(cursor, 'lightblue')
+    }
+  })
 
   // index is always between 0-4
   const handleHistory = (index) => () => {
@@ -265,38 +280,44 @@ export default function Calculator() {
     return () => {
       if (cursor !== null) {
         // resets previous cursor style to default
-        setHistoryIndexColor(cursor, 'black')
-        setHistoryBGColorOf(cursor, 'transparent')
+        setToUnselected(cursor)
       }
     }
-  }, [cursor])
+  })
 
   const moveCursorUp = () => {
     if (cursor !== null)
       if (cursor === 0) {
-        if (cursor + historyStart - 1 !== -1) {
+        if (cursor + historyStart - 1 === -1) {
+          setLowerVal(history[0][1])
+        } else {
           setHistoryStart(prev => prev - 1)
-          handleHistory((cursor + historyStart) % 5 - 1)
+          setLowerVal(history[cursor + historyStart - 1][1])
         }
-        // handleHistory(cursor + historyStart)()
-        // if (historyStart - 1 > -1)
-        //   setHistoryStart(prev => prev - 1)
+
+        setToSelected(0)
       } else {
-        // console.log(`${historyStart}, ${cursor}`)
         handleHistory(cursor - 1)()
       }
+
+      setPrevKey('hist')
   }
 
   const moveCursorDown = () => {
     if (cursor !== null) {
-      const nonEmptyHistoryLength = 5 - getAllEmptyHistories().length - 1
-      if (cursor === 4) {
-        handleHistory(cursor)()
-      } else if (cursor === nonEmptyHistoryLength) {
-        handleHistory(nonEmptyHistoryLength)()
+      const nonEmptyHistory = history.filter(i => i[0] !== ' ' && i[1] !== ' ')
+
+      if (cursor + historyStart === nonEmptyHistory.length - 1) {
+        setLowerVal(history[cursor + historyStart][1])
+        setToSelected(cursor + historyStart)
+      } else if (cursor === 4) {
+        setHistoryStart(prev => prev + 1)
+        setLowerVal(history[cursor + historyStart + 1][1])
       } else {
         handleHistory(cursor + 1)()
       }
+
+      setPrevKey('hist')
     }
   }
 
