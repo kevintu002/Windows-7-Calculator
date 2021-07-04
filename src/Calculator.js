@@ -17,6 +17,7 @@ export default function Calculator() {
 
   useEffect(() => {
     if (lowerVal === 'Infinity') {
+      // dividing by zero error
       setExpression([])
       setLowerVal('0')
       setPrevKey(null)
@@ -160,6 +161,7 @@ export default function Calculator() {
     setPrevKey(newOperator)
   }
 
+  // helper function. must pass an arr of strings. returns evaluation of the string
   const myEval = (stringArr) => {
     return evaluate(stringArr.join('')) + ''
   }
@@ -207,35 +209,37 @@ export default function Calculator() {
     }
 
     // state updates
-    let allEmptyHistories = getAllEmptyHistories()
+    let allEmptyHistories = history.filter(i => i[0] === ' ' && i[1] === ' ')
     let newHistory = history
     if (allEmptyHistories.length !== 0) {
       // edit history directly when there exists empty expressions
       newHistory[5 - allEmptyHistories.length] = [newExpression.join(''), newLowerVal]
       setCursor(5 - allEmptyHistories.length)
-      // setHistoryBGColorOf(5 - allEmptyHistories.length, 'lightblue')
     } else {
       newHistory = newHistory.concat([[newExpression.join(''), newLowerVal]])
       setCursor(4)
-      // setHistoryBGColorOf(4, 'lightblue')
-      setHistoryStart(prev => prev + 1)
+      setHistoryStart(getAllNonEmptyHistories().length - 4)
     }
+
     setHistory(newHistory)
     setExpression(newExpression)
     setLowerVal(newLowerVal)
     setPrevKey('=')
   }
 
-  const getAllEmptyHistories = () => {
-    return history.filter(i => i[0] === ' ' && i[1] === ' ')
+  // returns list of all non empty entries in history
+  const getAllNonEmptyHistories = () => {
+    return history.filter(i => i[0] !== ' ' && i[1] !== ' ')
   }
 
+  // sets background color of history display {index} to {color}
   const setHistoryBGColorOf = (index, color) => {
     const historyPointer = document.getElementsByClassName('history')[index]
     if (historyPointer)
       historyPointer.style.backgroundColor = color
   }
 
+  // sets font color of history display {index} to {color}
   const setHistoryIndexColor = (index, color) => {
     const historyPointer = document.getElementsByClassName('history')[index]
     if (historyPointer)
@@ -257,33 +261,31 @@ export default function Calculator() {
   // any key press after history has been selected should modify cursor style
   useEffect(() => {
     if (!['hist', '='].includes(prevKey)) {
+      // resets 
       setHistoryIndexColor(cursor, 'black')
       setHistoryBGColorOf(cursor, 'lightblue')
     }
-  })
 
-  // index is always between 0-4
-  const handleHistory = (index) => () => {
-    if (history[index + historyStart][1] !== ' ' && cursor !== null) {
-      setLowerVal(history[index + historyStart][1])
-      setPrevKey('hist')
-      setToSelected(index)
-      setCursor(index)
-    }
-  }
-
-  useEffect(() => {
     if (prevKey === 'hist')
       setToSelected(cursor)
     if (prevKey === '=')
       setHistoryBGColorOf(cursor, 'lightblue')
+
     return () => {
-      if (cursor !== null) {
-        // resets previous cursor style to default
+      if (cursor !== null)
+        // resets previous cursor style
         setToUnselected(cursor)
-      }
     }
   })
+
+  const handleHistory = (displayIndex) => () => {
+    if (history[displayIndex + historyStart][1] !== ' ' && cursor !== null) {
+      setLowerVal(history[displayIndex + historyStart][1])
+      setPrevKey('hist')
+      setToSelected(displayIndex)
+      setCursor(displayIndex)
+    }
+  }
 
   const moveCursorUp = () => {
     if (cursor !== null)
@@ -305,7 +307,7 @@ export default function Calculator() {
 
   const moveCursorDown = () => {
     if (cursor !== null) {
-      const nonEmptyHistory = history.filter(i => i[0] !== ' ' && i[1] !== ' ')
+      const nonEmptyHistory = getAllNonEmptyHistories()
 
       if (cursor + historyStart === nonEmptyHistory.length - 1) {
         setLowerVal(history[cursor + historyStart][1])
@@ -329,7 +331,10 @@ export default function Calculator() {
     console.log(key)
     const ctrlKeyMap = {
       q: 'M-',
-      p: 'M+'
+      p: 'M+',
+      m: 'MS',
+      r: 'MR',
+      l: 'MC'
     }
     const shiftKeyMap = {
       Enter: 'MS'
@@ -365,8 +370,7 @@ export default function Calculator() {
         document.getElementById(key).click()
       }
     } catch (error) {
-      // console.log(error)
-      // console.log(`input was not mapped`)
+      // unmapped inputs do nothing
     }
   }
 
