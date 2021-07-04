@@ -7,6 +7,7 @@ import { evaluate } from 'mathjs';
 export default function Calculator() {
   const [expression, setExpression] = useState([])
   const [lowerVal, setLowerVal] = useState('0')
+  const [waitingForNewExpression, setWaitingForNewExpression] = useState(false)
   const [prevKey, setPrevKey] = useState(null)
   const [mem, setMem] = useState('0')
   const [errorMsg, setErrorMsg] = useState('')
@@ -53,6 +54,7 @@ export default function Calculator() {
     setLowerVal('0')
     setPrevKey(null)
     setErrorMsg('')
+    setWaitingForNewExpression(false)
   }
 
   const handleClearEntry = () => {
@@ -99,6 +101,7 @@ export default function Calculator() {
       else
         setLowerVal(prev => prev + '.')
       
+      setWaitingForNewExpression(false)
       setPrevKey('.')
     }
   }
@@ -110,13 +113,14 @@ export default function Calculator() {
       // overwrite 0. otherwise, append
       setLowerVal(prev => prev === '0' ? newDigit : prev + newDigit)
     } else {
-      // next input overwrites lowerVal
-      if (prevKey === '=' || (prevKey === 'hist' && lowerVal === '0'))
+      if (waitingForNewExpression)
         setExpression([])
-      
+
+      // next input overwrites lowerVal
       setLowerVal(newDigit)
     }
 
+    setWaitingForNewExpression(false)
     setPrevKey(newDigit)
   }
 
@@ -221,6 +225,7 @@ export default function Calculator() {
       setHistoryStart(getAllNonEmptyHistories().length - 4)
     }
 
+    setWaitingForNewExpression(true)
     setHistory(newHistory)
     setExpression(newExpression)
     setLowerVal(newLowerVal)
@@ -281,6 +286,8 @@ export default function Calculator() {
   const handleHistory = (displayIndex) => () => {
     if (history[displayIndex + historyStart][1] !== ' ' && cursor !== null) {
       setLowerVal(history[displayIndex + historyStart][1])
+      if (prevKey === '=')
+        setWaitingForNewExpression(true)
       setPrevKey('hist')
       setToSelected(displayIndex)
       setCursor(displayIndex)
@@ -288,7 +295,7 @@ export default function Calculator() {
   }
 
   const moveCursorUp = () => {
-    if (cursor !== null)
+    if (cursor !== null) {
       if (cursor === 0) {
         if (cursor + historyStart - 1 === -1) {
           setLowerVal(history[0][1])
@@ -302,7 +309,10 @@ export default function Calculator() {
         handleHistory(cursor - 1)()
       }
 
+      if (prevKey === '=')
+        setWaitingForNewExpression(true)
       setPrevKey('hist')
+    }
   }
 
   const moveCursorDown = () => {
@@ -319,6 +329,8 @@ export default function Calculator() {
         handleHistory(cursor + 1)()
       }
 
+      if (prevKey === '=')
+        setWaitingForNewExpression(true)
       setPrevKey('hist')
     }
   }
@@ -361,11 +373,7 @@ export default function Calculator() {
               navigator.clipboard.writeText(lowerVal)
           })
         } else if (key === 'v') {
-          navigator.clipboard.readText().then(text => {
-            if (!isNaN(text))
-              return setLowerVal(text)
-            return setLowerVal('0')
-          })
+          navigator.clipboard.readText().then(text => setLowerVal(!isNaN(text) ? text : '0'))
 
           setPrevKey('paste')
         } else {
@@ -383,6 +391,9 @@ export default function Calculator() {
       // unmapped inputs do nothing
       // console.log(error)
     }
+
+    // removes button focus
+    e.target.blur()
   }
 
   useEffect(() => {
