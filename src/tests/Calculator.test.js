@@ -26,6 +26,8 @@ function clickSeriesOfButtons(str, clearBeforeSeries=true) {
     stringArr = stringArr.replace(/MS/g, 'S')
   if (stringArr.includes('pm'))
     stringArr = stringArr.replace(/pm/g, '±')
+  if (stringArr.includes('sqrt'))
+    stringArr = stringArr.replace(/sqrt/g, 's')
   
   stringArr.split('').forEach(key => {
     if (key === 'E')
@@ -34,6 +36,8 @@ function clickSeriesOfButtons(str, clearBeforeSeries=true) {
       clickButton('MR')
     else if (key === 'S')
       clickButton('MS')
+    else if (key === 's')
+      clickButton('√')
     else
       clickButton(key)
   });
@@ -273,6 +277,76 @@ test('handleEqual: MS= cases', () => {
   expect(lowerVal.textContent).toBe('5')
 })
 
+test('handleEqual: sqrt cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
+  // 0+sqrt=
+  clickSeriesOfButtons('0+sqrt=')
+  expect(expression.textContent).toBe('0+0')
+  expect(lowerVal.textContent).toBe('0')
+  // 0+4sqrt=
+  clickSeriesOfButtons('0+4sqrt=')
+  expect(expression.textContent).toBe('0+2')
+  expect(lowerVal.textContent).toBe('2')
+  // 0+1.4sqrt= //
+  clickSeriesOfButtons('0+1.4sqrt=')
+  expect(expression.textContent).toBe('0+1.1832159566199232')
+  expect(lowerVal.textContent).toBe('1.1832159566199232')
+  // 1+16sqrtsqrt=
+  clickSeriesOfButtons('1+16sqrtsqrt=')
+  expect(expression.textContent).toBe('1+2')
+  expect(lowerVal.textContent).toBe('3')
+  // 1+2=4sqrt= // 
+  clickSeriesOfButtons('1+2=4sqrt=')
+  expect(expression.textContent).toBe('2')
+  expect(lowerVal.textContent).toBe('2')
+  // 1+2=sqrt= //
+  clickSeriesOfButtons('1+2=sqrt=')
+  expect(expression.textContent).toBe('1.7320508075688772+2')
+  expect(lowerVal.textContent).toBe('3.732050807568877')
+})
+
+test('handleEqual: percent cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
+  // %=
+  clickSeriesOfButtons('%=')
+  expect(expression.textContent).toBe('0')
+  expect(lowerVal.textContent).toBe('0')
+  // =%
+  clickSeriesOfButtons('=%')
+  expect(expression.textContent).toBe('0')
+  expect(lowerVal.textContent).toBe('0')
+  // 72+%=
+  clickSeriesOfButtons('72+%=')
+  expect(expression.textContent).toBe('72+51.84')
+  expect(lowerVal.textContent).toBe('123.84')
+  // 72+5%=
+  clickSeriesOfButtons('72+5%=')
+  expect(expression.textContent).toBe('72+3.6')
+  expect(lowerVal.textContent).toBe('75.6')
+  // 72+1.5%=
+  clickSeriesOfButtons('72+1.5%=')
+  expect(expression.textContent).toBe('72+1.08')
+  expect(lowerVal.textContent).toBe('73.08')
+  // 100+16%=
+  clickSeriesOfButtons('100+16%=')
+  expect(expression.textContent).toBe('100+16')
+  expect(lowerVal.textContent).toBe('116')
+  // 100+2=4%= // 
+  clickSeriesOfButtons('100+2=4%=')
+  expect(expression.textContent).toBe('0')
+  expect(lowerVal.textContent).toBe('0')
+  // 100+2=%=
+  clickSeriesOfButtons('100+2=%=')
+  expect(expression.textContent).toBe('104.04+2')
+  expect(lowerVal.textContent).toBe('106.04')
+})
+
 test('handleOperator: existing operator cases', () => {
   render(<Calculator />);
   const expression = screen.getByTestId('expression')
@@ -510,6 +584,80 @@ test('handleOperator: MSoperator cases', () => {
   clickSeriesOfButtons('9MS1+2MS8+MS-')
   expect(expression.textContent).toBe('1+8-')
   expect(lowerVal.textContent).toBe('9')
+})
+
+test('handleOperator: sqrt cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
+  // 0+sqrt-
+  clickSeriesOfButtons('0+sqrt-')
+  expect(expression.textContent).toBe('0+0-')
+  expect(lowerVal.textContent).toBe('0')
+  // 0+4sqrt-
+  clickSeriesOfButtons('0+4sqrt-')
+  expect(expression.textContent).toBe('0+2-')
+  expect(lowerVal.textContent).toBe('2')
+  // 0+1.4sqrt- //
+  clickSeriesOfButtons('0+1.4sqrt-')
+  expect(expression.textContent).toBe('0+1.1832159566199232-')
+  expect(lowerVal.textContent).toBe('1.1832159566199232')
+  // 1+16sqrtsqrt-
+  clickSeriesOfButtons('1+16sqrtsqrt-')
+  expect(expression.textContent).toBe('1+2-')
+  expect(lowerVal.textContent).toBe('3')
+  // 1+2=4sqrt- // 
+  clickSeriesOfButtons('1+2=4sqrt-')
+  expect(expression.textContent).toBe('2-')
+  expect(lowerVal.textContent).toBe('2')
+  // 1+2=sqrt- //
+  clickSeriesOfButtons('1+2=sqrt-')
+  expect(expression.textContent).toBe('1.7320508075688772-')
+  expect(lowerVal.textContent).toBe('1.7320508075688772')
+})
+
+test('handleOperator: percent cases', () => {
+  render(<Calculator />);
+  const expression = screen.getByTestId('expression')
+  const lowerVal = screen.getByTestId('lowerVal')
+
+  // %+
+  clickSeriesOfButtons('%+')
+  expect(expression.textContent).toBe('0+')
+  expect(lowerVal.textContent).toBe('0')
+  // +%
+  clickSeriesOfButtons('+%')
+  expect(expression.textContent).toBe('0+')
+  expect(lowerVal.textContent).toBe('0')
+  // 72+%-
+  clickSeriesOfButtons('72+%-')
+  expect(expression.textContent).toBe('72+51.84-')
+  expect(lowerVal.textContent).toBe('123.84')
+  // 72+5%-
+  clickSeriesOfButtons('72+5%-')
+  expect(expression.textContent).toBe('72+3.6-')
+  expect(lowerVal.textContent).toBe('75.6')
+  // 72+1.5%-
+  clickSeriesOfButtons('72+1.5%-')
+  expect(expression.textContent).toBe('72+1.08-')
+  expect(lowerVal.textContent).toBe('73.08')
+  // 100+16%-
+  clickSeriesOfButtons('100+16%-')
+  expect(expression.textContent).toBe('100+16-')
+  expect(lowerVal.textContent).toBe('116')
+  // 100+2=4%- // 
+  clickSeriesOfButtons('100+2=4%-')
+  expect(expression.textContent).toBe('0-')
+  expect(lowerVal.textContent).toBe('0')
+  // 100+2=%-
+  clickSeriesOfButtons('100+2=%-')
+  expect(expression.textContent).toBe('104.04-')
+  expect(lowerVal.textContent).toBe('104.04')
+  // 100+2-%- //
+  clickSeriesOfButtons('100+2-%-')
+  expect(expression.textContent).toBe('100+2-104.04-')
+  expect(lowerVal.textContent).toBe('-2.0400000000000063')
 })
 
 test('toggle sign cases', () => {

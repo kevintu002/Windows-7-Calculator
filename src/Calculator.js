@@ -2,7 +2,7 @@ import './css/style.css';
 import CalcDisplay from './components/CalcDisplay';
 import CalcKey from './components/CalcKey';
 import { useEffect, useState } from 'react';
-import { evaluate } from 'mathjs';
+import { evaluate, sqrt, inv } from 'mathjs';
 
 export default function Calculator() {
   const [expression, setExpression] = useState([])
@@ -24,6 +24,8 @@ export default function Calculator() {
       setPrevKey(null)
       setErrorMsg('Cannot divide by zero')
     }
+    if (lowerVal.length > 12)
+      document.getElementById('lowerVal').style.fontSize = '16px'
   }, [lowerVal])
 
   const handleMClear = () => {
@@ -68,20 +70,31 @@ export default function Calculator() {
   }
 
   const handleSqrt = () => {
-    // sqrt and inverse are handled the same way
-
-
-  }
-  
-  const handlePercent = () => {
-
-
-    setPrevKey()
+    setLowerVal(prev => sqrt(prev) + '')
+    
+    setPrevKey('sqrtinv')
   }
 
   const handleInverse = () => {
+    setLowerVal(prev => inv(prev) + '')
 
-    setPrevKey('inverse')
+    // sqrt and inverse interactions are the same
+    setPrevKey('sqrtinv')
+  }
+  
+  const handlePercent = () => {
+    if (expression.length > 1) {
+      if (operRegEx.test(expression.slice(-1))) {
+        setLowerVal(prev => (myEval(expression.slice(0, -1)) * prev / 100) + '')
+      } else {
+        setLowerVal(prev => (myEval(expression) * prev / 100) + '')
+      }
+    } else {
+      // expressions without an operator is always 0
+      setLowerVal('0')
+    }
+
+    setPrevKey('percent')
   }
 
   const handleDelete = () => {
@@ -109,7 +122,8 @@ export default function Calculator() {
   const handleDigit = ({target}) => {
     const newDigit = target.name
 
-    if (!['=', 'MR', 'MS', 'hist'].includes(prevKey) && !operRegEx.test(prevKey)) {
+    if (!['=', 'MR', 'MS', 'hist', 'sqrtinv', 'percent'].includes(prevKey) 
+      && !operRegEx.test(prevKey)) {
       // overwrite 0. otherwise, append
       setLowerVal(prev => prev === '0' ? newDigit : prev + newDigit)
     } else {
@@ -132,7 +146,8 @@ export default function Calculator() {
     if (operRegEx.test(prevKey)) {
       // replace operator
       newExpression = [...expression.slice(0,-1), newOperator]
-    } else if (['.', 'CE', 'toggleSign', 'MR', 'hist'].includes(prevKey)) {
+    } else if (['.', 'CE', 'toggleSign', 'MR', 'hist', 'paste', 'sqrtinv', 'percent']
+      .includes(prevKey)) {
       // existing expression with last item as operator will append the lower value and the newOperator
       // otherwise replace the expression with the evaluation and the newOperator
       // remove dot
@@ -159,7 +174,7 @@ export default function Calculator() {
       newExpression = oldExpression.concat(newOperator)
     }
 
-    // state updates
+    setWaitingForNewExpression(false)
     setExpression(newExpression)
     setLowerVal(newLowerVal)
     setPrevKey(newOperator)
@@ -182,7 +197,8 @@ export default function Calculator() {
         newExpression = [lowerVal.slice(0,-1)]
         newLowerVal = lowerVal.slice(0,-1)
       }
-    } else if (['.', 'CE', 'toggleSign', 'MR', 'hist'].includes(prevKey)) {
+    } else if (['.', 'CE', 'toggleSign', 'MR', 'hist', 'paste', 'sqrtinv', 'percent']
+      .includes(prevKey)) {
       // existing expression with last item as operator will append the lowerVal to expression 
       // otherwise repeat expression on the lowerVal
       // remove dot
@@ -337,7 +353,7 @@ export default function Calculator() {
 
   const handleKeyPress = (e) => {
     const key = e.key
-    console.log(key)
+    // console.log(key)
     const ctrlKeyMap = {
       q: 'M-',
       p: 'M+',
@@ -349,15 +365,17 @@ export default function Calculator() {
     }
     const shiftKeyMap = {
       Enter: 'MS',
-      '=': '+'
+      '=': '+',
+      '@': 'sqrt',
+      '%': '%'
     }
     const keyMap = {
       Enter: '=',
-      r: '1/x',
+      r: 'inverse',
       Escape: 'C',
       Delete: 'CE',
       Backspace: 'Del',
-      F9: '±',
+      F9: 'toggleSign',
       ArrowUp: 'up',
       ArrowDown: 'down',
       PageUp: 'up',
@@ -367,11 +385,7 @@ export default function Calculator() {
       if (e.ctrlKey && key in ctrlKeyMap) {
         // ctrl key modifier
         if (key === 'c') {
-          // navigator.clipboard.writeText(lowerVal)
-          navigator.permissions.query({name: "clipboard-write"}).then(result => {
-            if (result.state === "granted" || result.state === "prompt")
-              navigator.clipboard.writeText(lowerVal)
-          })
+          navigator.clipboard.writeText(lowerVal)
         } else if (key === 'v') {
           navigator.clipboard.readText().then(text => setLowerVal(!isNaN(text) ? text : '0'))
 
@@ -382,6 +396,8 @@ export default function Calculator() {
       } else if (e.shiftKey && key in shiftKeyMap) {
         // shift key modifier
         document.getElementById(shiftKeyMap[key]).click()
+      } else if (key === 'F1') {
+        window.open('https://github.com/Poplica/react-calculator/blob/master/README.md', '_blank')
       } else if (key in keyMap) {
         document.getElementById(keyMap[key]).click()
       } else {
@@ -406,7 +422,12 @@ export default function Calculator() {
   return (
     <main className="calculator">
       <div className="menu">
-        <span>V</span>iew&nbsp;&nbsp; <span>E</span>dit&nbsp;&nbsp; <span>H</span>elp
+        <a 
+          target="_blank"
+          name="help"
+          href="https://github.com/Poplica/react-calculator/blob/master/README.md"
+          rel="noopener noreferrer"
+        >Help</a>
       </div>
 
       <div className="navigation">
@@ -447,8 +468,8 @@ export default function Calculator() {
         <CalcKey name="Del" onClick={handleDelete}/>
         <CalcKey name="CE" onClick={handleClearEntry}/>
         <CalcKey name="C" onClick={handleClear}/>
-        <CalcKey name="±" onClick={handleToggleSign}/>
-        <CalcKey name="√" onClick={handleSqrt}/><br/>
+        <CalcKey id="toggleSign" name="±" onClick={handleToggleSign}/>
+        <CalcKey id="sqrt" name="√" onClick={handleSqrt}/><br/>
 
         <CalcKey name="7" onClick={handleDigit}/>
         <CalcKey name="8" onClick={handleDigit}/>
@@ -460,7 +481,7 @@ export default function Calculator() {
         <CalcKey name="5" onClick={handleDigit}/>
         <CalcKey name="6" onClick={handleDigit}/>
         <CalcKey name="*" onClick={handleOperator}/>
-        <CalcKey name="1/x" onClick={handleInverse}/><br/>
+        <CalcKey id="inverse" name="1/x" onClick={handleInverse}/><br/>
 
         <CalcKey name="1" onClick={handleDigit}/>
         <CalcKey name="2" onClick={handleDigit}/>
