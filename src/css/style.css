@@ -37,7 +37,7 @@ main {
   border-bottom: solid 1px gray;
   font-size: 16px;
   padding: 2px 4px;
-
+  
   background: linear-gradient(#f3f6fa 0%, #f3f6fa 34%, #D7E2EF 38%, #D7E2EF 100%);
 }
 .menu span {
@@ -54,7 +54,7 @@ main {
 
 .display {
   position: relative;
-  width: 86%;
+  width: 90%;
   margin: 15px 0 3px 14px;
   border: solid 1px gray;
   border-radius: 3px;
@@ -152,12 +152,12 @@ button:hover {
 }
 
 .btn-wide {
-  width: 77px;
+  width: 74px;
 }
 .btn-tall {
   position: absolute;
-  left: -1px;
-  height: 63px;
+  left: -11px;
+  height: 62px;
 }
 
 .bot-left {

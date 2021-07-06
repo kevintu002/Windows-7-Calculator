@@ -456,9 +456,6 @@ export default function Calculator() {
       </div>
 
       <div className="keyboard">
-      </div>
-
-      <div className="keyboard-bot">
         <CalcKey name="MC" onClick={handleMClear}/>
         <CalcKey name="MR" onClick={handleMRetrieve}/>
         <CalcKey name="MS" onClick={handleMStore}/>
@@ -471,28 +468,35 @@ export default function Calculator() {
         <CalcKey id="toggleSign" name="±" onClick={handleToggleSign}/>
         <CalcKey id="sqrt" name="√" onClick={handleSqrt}/><br/>
 
-        <CalcKey name="7" onClick={handleDigit}/>
-        <CalcKey name="8" onClick={handleDigit}/>
-        <CalcKey name="9" onClick={handleDigit}/>
+        <CalcKey className="btn-white" name="7" onClick={handleDigit}/>
+        <CalcKey className="btn-white" name="8" onClick={handleDigit}/>
+        <CalcKey className="btn-white" name="9" onClick={handleDigit}/>
         <CalcKey name="/" onClick={handleOperator}/>
         <CalcKey name="%" onClick={handlePercent}/><br/>
 
-        <CalcKey name="4" onClick={handleDigit}/>
-        <CalcKey name="5" onClick={handleDigit}/>
-        <CalcKey name="6" onClick={handleDigit}/>
-        <CalcKey name="*" onClick={handleOperator}/>
+        <CalcKey className="btn-white" name="4" onClick={handleDigit}/>
+        <CalcKey className="btn-white" name="5" onClick={handleDigit}/>
+        <CalcKey className="btn-white" name="6" onClick={handleDigit}/>
+        <CalcKey className="btn-white" name="*" onClick={handleOperator}/>
         <CalcKey id="inverse" name="1/x" onClick={handleInverse}/><br/>
-
-        <CalcKey name="1" onClick={handleDigit}/>
-        <CalcKey name="2" onClick={handleDigit}/>
-        <CalcKey name="3" onClick={handleDigit}/>
-        <CalcKey name="-" onClick={handleOperator}/><br/>
-
-        <CalcKey name="0" onClick={handleDigit}/>
-        <CalcKey name="." onClick={handleDot}/>
-        <CalcKey name="+" onClick={handleOperator}/>
-        <CalcKey name="=" onClick={handleEqual}/>
       </div>
+
+      <div className="keyboard-bot">
+        <div className="bot-left">
+          <CalcKey className="btn-white" name="1" onClick={handleDigit}/>
+          <CalcKey className="btn-white" name="2" onClick={handleDigit}/>
+          <CalcKey className="btn-white" name="3" onClick={handleDigit}/>
+          <CalcKey name="-" onClick={handleOperator}/><br/>
+
+          <CalcKey className="btn-white btn-wide" name="0" onClick={handleDigit}/>
+          <CalcKey className="btn-white" name="." onClick={handleDot}/>
+          <CalcKey name="+" onClick={handleOperator}/>
+        </div>
+        <div className="bot-right">
+          <CalcKey className="btn-tall" name="=" onClick={handleEqual}/>
+        </div>
+      </div>
+      
     </main>
   )
 }

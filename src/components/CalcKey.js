@@ -1,7 +1,12 @@
 import React from 'react';
 
-export default function CalcKey({id, name, onClick}) {
+export default function CalcKey({className, id, name, onClick}) {
   return (
-    <button id={id ? id : name} name={name} onClick={onClick}>{name}</button>
+    <button 
+      className={className ? className : ''} 
+      id={id ? id : name} 
+      name={name} 
+      onClick={onClick}>{name}
+    </button>
   )
 }
