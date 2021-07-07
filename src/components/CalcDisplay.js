@@ -4,11 +4,21 @@ export default function CalcDisplay({upperVal, lowerVal}) {
   return (
     <div>
       <div className="outer-div expression">
-        <div id="expression" className="inner-div sm-text" data-testid="expression">{upperVal}</div>
+        <label 
+          id="expression" 
+          className="inner-div small-text" 
+          data-testid="expression">
+            {upperVal}
+        </label>
       </div>
       
       <div className="outer-div">
-        <div id="lowerVal" className="inner-div lg-text" data-testid="lowerVal">{lowerVal}</div>
+        <label 
+          id="lowerVal" 
+          className="inner-div large-text" 
+          data-testid="lowerVal">
+            {lowerVal}
+        </label>
       </div>
     </div>
   )

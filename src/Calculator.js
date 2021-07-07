@@ -427,15 +427,14 @@ export default function Calculator() {
           name="help"
           href="https://github.com/Poplica/react-calculator/blob/master/README.md"
           rel="noopener noreferrer"
-        >Help</a>
-      </div>
-
-      <div className="navigation">
-        <CalcKey id="up" onClick={moveCursorUp}/>
-        <CalcKey id="down" onClick={moveCursorDown}/>
+        ><span>Help</span></a>
       </div>
 
       <div className="display">
+        <div className="navigation">
+          <CalcKey id="up" name="&#x25B2;" onClick={moveCursorUp}/>
+          <CalcKey id="down" name="&#x25BC;" onClick={moveCursorDown}/>
+        </div>
         <div className="outer-div">
           {history.slice(historyStart, historyStart + 5).map((i, index) =>
             <div 
@@ -451,8 +450,8 @@ export default function Calculator() {
         </div>
         
         <CalcDisplay upperVal={expression} lowerVal={lowerVal} />
-        <div className="error">{errorMsg}</div>
-        <div className="m-icon">{mem !== '0' ? 'M' : ''}</div>
+        <label id="error">{errorMsg}</label>
+        <label id="memory">{mem !== '0' ? 'M' : ''}</label>
       </div>
 
       <div className="keyboard">
@@ -468,32 +467,32 @@ export default function Calculator() {
         <CalcKey id="toggleSign" name="±" onClick={handleToggleSign}/>
         <CalcKey id="sqrt" name="√" onClick={handleSqrt}/><br/>
 
-        <CalcKey className="btn-white" name="7" onClick={handleDigit}/>
-        <CalcKey className="btn-white" name="8" onClick={handleDigit}/>
-        <CalcKey className="btn-white" name="9" onClick={handleDigit}/>
+        <CalcKey className="button-num" name="7" onClick={handleDigit}/>
+        <CalcKey className="button-num" name="8" onClick={handleDigit}/>
+        <CalcKey className="button-num" name="9" onClick={handleDigit}/>
         <CalcKey name="/" onClick={handleOperator}/>
         <CalcKey name="%" onClick={handlePercent}/><br/>
 
-        <CalcKey className="btn-white" name="4" onClick={handleDigit}/>
-        <CalcKey className="btn-white" name="5" onClick={handleDigit}/>
-        <CalcKey className="btn-white" name="6" onClick={handleDigit}/>
-        <CalcKey className="btn-white" name="*" onClick={handleOperator}/>
+        <CalcKey className="button-num" name="4" onClick={handleDigit}/>
+        <CalcKey className="button-num" name="5" onClick={handleDigit}/>
+        <CalcKey className="button-num" name="6" onClick={handleDigit}/>
+        <CalcKey className="button-num" name="*" onClick={handleOperator}/>
         <CalcKey id="inverse" name="1/x" onClick={handleInverse}/><br/>
       </div>
 
-      <div className="keyboard-bot">
+      <div className="keyboard keyboard-bot">
         <div className="bot-left">
-          <CalcKey className="btn-white" name="1" onClick={handleDigit}/>
-          <CalcKey className="btn-white" name="2" onClick={handleDigit}/>
-          <CalcKey className="btn-white" name="3" onClick={handleDigit}/>
+          <CalcKey className="button-num" name="1" onClick={handleDigit}/>
+          <CalcKey className="button-num" name="2" onClick={handleDigit}/>
+          <CalcKey className="button-num" name="3" onClick={handleDigit}/>
           <CalcKey name="-" onClick={handleOperator}/><br/>
 
-          <CalcKey className="btn-white btn-wide" name="0" onClick={handleDigit}/>
-          <CalcKey className="btn-white" name="." onClick={handleDot}/>
+          <CalcKey className="button-num button-wide" name="0" onClick={handleDigit}/>
+          <CalcKey className="button-num" name="." onClick={handleDot}/>
           <CalcKey name="+" onClick={handleOperator}/>
         </div>
         <div className="bot-right">
-          <CalcKey className="btn-tall" name="=" onClick={handleEqual}/>
+          <CalcKey className="button-tall" name="=" onClick={handleEqual}/>
         </div>
       </div>
       
