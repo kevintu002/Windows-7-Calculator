@@ -5,7 +5,8 @@ This project is my replication for the Windows 7 Calculator.
 ## Where is it?
 
 [Link to calculator](https://poplica.github.io/Windows-7-Calculator/)
-![Broken image link](https://imgur.com/YQGgCjN)
+
+![Broken image link](https://i.imgur.com/YQGgCjN.png)
 
 ## Why did I make this?
 
@@ -29,7 +30,6 @@ The calculator can take keyboard inputs from your 0-9 keys or your numpad. You c
 ## Keyboard shortcuts
 
 | Key combinations | Description |
-
 | Shift+F1 | Bring up readme page |
 | Backspace | Press the backspace button |
 | Esc | Press the C button |
