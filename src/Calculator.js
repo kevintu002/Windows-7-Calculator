@@ -427,7 +427,7 @@ export default function Calculator() {
           name="help"
           href="https://github.com/Poplica/react-calculator/blob/master/README.md"
           rel="noopener noreferrer"
-        ><span>Help</span></a>
+        >Help</a>
       </div>
 
       <div className="display">
@@ -476,7 +476,7 @@ export default function Calculator() {
         <CalcKey className="button-num" name="4" onClick={handleDigit}/>
         <CalcKey className="button-num" name="5" onClick={handleDigit}/>
         <CalcKey className="button-num" name="6" onClick={handleDigit}/>
-        <CalcKey className="button-num" name="*" onClick={handleOperator}/>
+        <CalcKey name="*" onClick={handleOperator}/>
         <CalcKey id="inverse" name="1/x" onClick={handleInverse}/><br/>
       </div>
 
