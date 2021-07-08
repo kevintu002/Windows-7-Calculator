@@ -34,16 +34,16 @@ The calculator can take keyboard inputs from your 0-9 keys or your numpad. You c
 ## Keyboard shortcuts
 
 | Key combinations | Description |
-| Special keys | ----------- |
+| ----------- | ----------- |
 | Shift+F1 | Bring up readme page |
 | Backspace | Press the backspace button |
 | Esc | Press the C button |
 | Del | Press the CE button |
 | Up Arrow key | Navigate up in the calculation history |
 | Down Arrow key | Navigate down in the calculation history |
-| Esc | Cancel editing the calculation history | 
-| Enter	| Recalculate the calculation history after editing |
-| Ctrl key modifiers | ----------- |
+| Esc | Cancel editing the calculation history |
+| Enter | Recalculate the calculation history after editing |
+| **Ctrl key modifiers** |
 | Ctrl+C | Copy to Clipboard |
 | Ctrl+V | Paste to Clipboard |
 | Ctrl+Q | Press the M- button |
@@ -51,15 +51,15 @@ The calculator can take keyboard inputs from your 0-9 keys or your numpad. You c
 | Ctrl+M or Shift+Enter | Press the MS button |
 | Ctrl+R | Press the MR button |
 | Ctrl+L | Press the MC button |
-| Numbers/Operators | ----------- |
-| %	| Press the % button |
+| **Numbers and Operators** |
+| % | Press the % button |
 | F9 | Press the +/- button |
 | / | Press the / button |
-| *	| Press the * button |
-| +	| Press the + button |
-| -	| Press the - button |
-| R	| Press the 1/x button
-| @	| Press the square root button |
+| * | Press the * button |
+| + | Press the + button |
+| - | Press the - button |
+| R | Press the 1/x button
+| @ | Press the square root button |
 | 0-9 | Press the number buttons (0-9) |
-| =	| Press the = button |
-| .	| Press the . (decimal point) button |
+| = | Press the = button |
+| . | Press the . (decimal point) button |
