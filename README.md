@@ -30,6 +30,7 @@ The calculator can take keyboard inputs from your 0-9 keys or your numpad. You c
 ## Keyboard shortcuts
 
 | Key combinations | Description |
+| ----------- | ----------- |
 | Shift+F1 | Bring up readme page |
 | Backspace | Press the backspace button |
 | Esc | Press the C button |
