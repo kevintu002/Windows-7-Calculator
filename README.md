@@ -8,7 +8,8 @@ This project is my replication for the Windows 7 Calculator.
 
 ![Broken image link](https://i.imgur.com/YQGgCjN.png)
 
-![Broken image link](https://i.imgur.com/VpwQeL4.png "Original Win7 Calculator")
+Original Win7 Calculator
+![Broken image link](https://i.imgur.com/VpwQeL4.png)
 
 ## Why did I make this?
 
@@ -32,7 +33,7 @@ The calculator can take keyboard inputs from your 0-9 keys or your numpad. You c
 ## Keyboard shortcuts
 
 | Key combinations | Description |
-| Special keys |
+| Special keys | |
 | Shift+F1 | Bring up readme page |
 | Backspace | Press the backspace button |
 | Esc | Press the C button |
@@ -41,7 +42,7 @@ The calculator can take keyboard inputs from your 0-9 keys or your numpad. You c
 | Down Arrow key | Navigate down in the calculation history |
 | Esc | Cancel editing the calculation history | 
 | Enter	| Recalculate the calculation history after editing |
-| Ctrl key modifiers |
+| Ctrl key modifiers | |
 | Ctrl+C | Copy to Clipboard |
 | Ctrl+V | Paste to Clipboard |
 | Ctrl+Q | Press the M- button |
@@ -49,7 +50,7 @@ The calculator can take keyboard inputs from your 0-9 keys or your numpad. You c
 | Ctrl+M or Shift+Enter | Press the MS button |
 | Ctrl+R | Press the MR button |
 | Ctrl+L | Press the MC button |
-| Numbers/Operators |
+| Numbers/Operators | |
 | %	| Press the % button |
 | F9 | Press the +/- button |
 | / | Press the / button |
