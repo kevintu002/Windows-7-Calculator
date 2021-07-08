@@ -1,6 +1,6 @@
-import './css/style.css';
-import CalcDisplay from './components/CalcDisplay';
-import CalcKey from './components/CalcKey';
+import '../css/style.css';
+import CalcDisplay from './CalcDisplay';
+import CalcKey from './CalcKey';
 import { useEffect, useState } from 'react';
 import { evaluate, sqrt, inv } from 'mathjs';
 
