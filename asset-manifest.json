@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/Windows-7-Calculator/static/css/main.fd674d26.chunk.css",
-    "main.js": "/Windows-7-Calculator/static/js/main.130d5e8f.chunk.js",
-    "main.js.map": "/Windows-7-Calculator/static/js/main.130d5e8f.chunk.js.map",
+    "main.js": "/Windows-7-Calculator/static/js/main.cfc6f2ec.chunk.js",
+    "main.js.map": "/Windows-7-Calculator/static/js/main.cfc6f2ec.chunk.js.map",
     "runtime-main.js": "/Windows-7-Calculator/static/js/runtime-main.5e314431.js",
     "runtime-main.js.map": "/Windows-7-Calculator/static/js/runtime-main.5e314431.js.map",
-    "static/js/2.15ae4ca7.chunk.js": "/Windows-7-Calculator/static/js/2.15ae4ca7.chunk.js",
-    "static/js/2.15ae4ca7.chunk.js.map": "/Windows-7-Calculator/static/js/2.15ae4ca7.chunk.js.map",
+    "static/js/2.23d854c2.chunk.js": "/Windows-7-Calculator/static/js/2.23d854c2.chunk.js",
+    "static/js/2.23d854c2.chunk.js.map": "/Windows-7-Calculator/static/js/2.23d854c2.chunk.js.map",
     "index.html": "/Windows-7-Calculator/index.html",
     "static/css/main.fd674d26.chunk.css.map": "/Windows-7-Calculator/static/css/main.fd674d26.chunk.css.map",
-    "static/js/2.15ae4ca7.chunk.js.LICENSE.txt": "/Windows-7-Calculator/static/js/2.15ae4ca7.chunk.js.LICENSE.txt"
+    "static/js/2.23d854c2.chunk.js.LICENSE.txt": "/Windows-7-Calculator/static/js/2.23d854c2.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.5e314431.js",
-    "static/js/2.15ae4ca7.chunk.js",
+    "static/js/2.23d854c2.chunk.js",
     "static/css/main.fd674d26.chunk.css",
-    "static/js/main.130d5e8f.chunk.js"
+    "static/js/main.cfc6f2ec.chunk.js"
   ]
 }
