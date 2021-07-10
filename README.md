@@ -1,4 +1,6 @@
-# What is this?
+# Windows 7 Calculator
+
+## What is this?
 
 This project is my replication for the Windows 7 Calculator.
 
