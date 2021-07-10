@@ -282,14 +282,14 @@ export default function Calculator() {
     return history.filter(i => i[0] !== ' ' && i[1] !== ' ')
   }
 
-  // sets background color of history display {index} to {color}
+  // sets background color of history display index to color
   const setHistoryBGColorOf = (index, color) => {
     const historyPointer = document.getElementsByClassName('history')[index]
     if (historyPointer)
       historyPointer.style.backgroundColor = color
   }
 
-  // sets font color of history display {index} to {color}
+  // sets font color of history display index to color
   const setHistoryIndexColor = (index, color) => {
     const historyPointer = document.getElementsByClassName('history')[index]
     if (historyPointer)
