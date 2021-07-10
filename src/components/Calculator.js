@@ -27,31 +27,35 @@ export default function Calculator() {
       document.getElementById('lowerVal').style.fontSize = '16px'
   }, [lowerVal])
 
-  useEffect(() => {
-    if (errorMsg !== '') {
-      setLowerVal('0')
-    }
   const handleMClear = () => {
     setMem('0')
   }
 
   const handleMRetrieve = () => {
-    setLowerVal(mem)
-    setPrevKey('MR')
+    if (!errorMsg) {
+      setLowerVal(mem)
+      setPrevKey('MR')
+    }
   }
 
   const handleMStore = () => {
-    setMem(lowerVal)
-    if (!isNaN(prevKey))
-      setPrevKey('MS')
+    if (!errorMsg) {
+      setMem(lowerVal)
+      if (!isNaN(prevKey))
+        setPrevKey('MS')
+    }
   }
 
   const handleMAdd = () => {
-    setMem(myEval([mem, '+', lowerVal]))
+    if (!errorMsg) {
+      setMem(myEval([mem, '+', lowerVal]))
+    }
   }
 
   const handleMSubtract = () => {
-    setMem(myEval([mem, '-', lowerVal]))
+    if (!errorMsg) {
+      setMem(myEval([mem, '-', lowerVal]))
+    }
   }
 
   const handleClear = () => {
