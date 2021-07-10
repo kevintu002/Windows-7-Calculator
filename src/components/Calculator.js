@@ -7,17 +7,18 @@ import { evaluate, sqrt, inv } from 'mathjs';
 export default function Calculator() {
   const [expression, setExpression] = useState([])
   const [lowerVal, setLowerVal] = useState('0')
-  const [waitingForNewExpression, setWaitingForNewExpression] = useState(false)
-  const [prevKey, setPrevKey] = useState(null)
   const [mem, setMem] = useState('0')
   const [errorMsg, setErrorMsg] = useState('')
   const [history, setHistory] = useState(Array(5).fill([' ', ' ']))
   const [cursor, setCursor] = useState(null)
+
+  const [waitingForNewExpression, setWaitingForNewExpression] = useState(false)
+  const [prevKey, setPrevKey] = useState(null)
   const [historyStart, setHistoryStart] = useState(0)
   const operRegEx = new RegExp('\\+|-|\\*|\\/')
 
   useEffect(() => {
-    if (lowerVal === 'Infinity') {
+    if (['Infinity', 'NaN'].includes(lowerVal)) {
       // dividing by zero error
       setExpression([])
       setLowerVal('0')
