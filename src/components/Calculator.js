@@ -18,16 +18,22 @@ export default function Calculator() {
   const operRegEx = new RegExp('\\+|-|\\*|\\/')
 
   useEffect(() => {
-    if (['Infinity', 'NaN'].includes(lowerVal)) {
-      // dividing by zero error
-      setExpression([])
-      setLowerVal('0')
-      setPrevKey(null)
+    if (['Infinity', 'NaN'].includes(lowerVal))
       setErrorMsg('Cannot divide by zero')
-    }
+    else if (lowerVal.includes('i'))
+      setErrorMsg('Cannot sqrt negative')
+
     if (lowerVal.length > 12)
       document.getElementById('lowerVal').style.fontSize = '16px'
   }, [lowerVal])
+
+  useEffect(() => {
+    if (errorMsg !== '') {
+      setExpression([])
+      setLowerVal('0')
+      setPrevKey(null)
+    }
+  }, [errorMsg])
 
   const handleMClear = () => {
     setMem('0')
