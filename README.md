@@ -27,6 +27,10 @@ I do not like nor utilize the Win10 calculator because you cannot use the arrow 
 - CSS
 - HTML
 
+## Invalid inputs
+
+Invalid inputs will require you to reset the calculator with Clear (Escape) or Clear Entry (Delete)
+
 ## Some other neat stuff
 
 The calculator can take keyboard inputs from your 0-9 keys or your numpad. You can also navigate through the history with your arrow keys. The full list of shortcuts is below.
@@ -37,8 +41,8 @@ The calculator can take keyboard inputs from your 0-9 keys or your numpad. You c
 | ----------- | ----------- |
 | Shift+F1 | Bring up readme page |
 | Backspace | Press the backspace button |
-| Esc | Press the C button |
-| Del | Press the CE button |
+| Escape | Press the C button |
+| Delete | Press the CE button |
 | Up Arrow key | Navigate up in the calculation history |
 | Down Arrow key | Navigate down in the calculation history |
 | Esc | Cancel editing the calculation history |

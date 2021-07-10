@@ -29,12 +29,8 @@ export default function Calculator() {
 
   useEffect(() => {
     if (errorMsg !== '') {
-      setExpression([])
       setLowerVal('0')
-      setPrevKey(null)
     }
-  }, [errorMsg])
-
   const handleMClear = () => {
     setMem('0')
   }
@@ -67,124 +63,144 @@ export default function Calculator() {
   }
 
   const handleClearEntry = () => {
-    setLowerVal('0')
-    setPrevKey('CE')
+    if (errorMsg) {
+      handleClear()
+    } else {
+      setLowerVal('0')
+      setPrevKey('CE')
+    }
   }
 
   const handleToggleSign = () => {
-    setLowerVal(prev => (prev * -1) + '')
-    setPrevKey('toggleSign')
+    if (!errorMsg) {
+      setLowerVal(prev => (prev * -1) + '')
+      setPrevKey('toggleSign')
+    }
   }
 
   const handleSqrt = () => {
-    setLowerVal(prev => sqrt(prev) + '')
-    
-    setPrevKey('sqrtinv')
+    if (!errorMsg) {
+      setLowerVal(prev => sqrt(prev) + '')
+      
+      setPrevKey('sqrtinv')
+    }
   }
 
   const handleInverse = () => {
-    setLowerVal(prev => inv(prev) + '')
+    if (!errorMsg) {
+      setLowerVal(prev => inv(prev) + '')
 
-    // sqrt and inverse interactions are the same
-    setPrevKey('sqrtinv')
+      // sqrt and inverse interactions are the same
+      setPrevKey('sqrtinv')
+    }
   }
   
   const handlePercent = () => {
-    if (expression.length > 1) {
-      if (operRegEx.test(expression.slice(-1))) {
-        setLowerVal(prev => (myEval(expression.slice(0, -1)) * prev / 100) + '')
+    if (!errorMsg) {
+      if (expression.length > 1) {
+        if (operRegEx.test(expression.slice(-1))) {
+          setLowerVal(prev => (myEval(expression.slice(0, -1)) * prev / 100) + '')
+        } else {
+          setLowerVal(prev => (myEval(expression) * prev / 100) + '')
+        }
       } else {
-        setLowerVal(prev => (myEval(expression) * prev / 100) + '')
+        // expressions without an operator is always 0
+        setLowerVal('0')
       }
-    } else {
-      // expressions without an operator is always 0
-      setLowerVal('0')
-    }
 
-    setPrevKey('percent')
+      setPrevKey('percent')
+    }
   }
 
   const handleDelete = () => {
-    if (prevKey !== '=' && lowerVal !== '0') {
-      setLowerVal(prev => prev.length === 1 ? '0' : prev.slice(0, -1))
+    if (!errorMsg) {
+      if (prevKey !== '=' && lowerVal !== '0') {
+        setLowerVal(prev => prev.length === 1 ? '0' : prev.slice(0, -1))
 
-      setPrevKey('del')
+        setPrevKey('del')
+      }
     }
   }
 
   const handleDot = () => {
-    if (!lowerVal.includes('.')) {
-      if (prevKey === '=' || operRegEx.test(prevKey) 
-      || (expression.length === 0 && lowerVal === '0'))
-      // prepend 0 under special cases
-        setLowerVal('0.')
-      else
-        setLowerVal(prev => prev + '.')
-      
-      setWaitingForNewExpression(false)
-      setPrevKey('.')
+    if (!errorMsg) {
+      if (!lowerVal.includes('.')) {
+        if (prevKey === '=' || operRegEx.test(prevKey) 
+        || (expression.length === 0 && lowerVal === '0'))
+        // prepend 0 under special cases
+          setLowerVal('0.')
+        else
+          setLowerVal(prev => prev + '.')
+        
+        setWaitingForNewExpression(false)
+        setPrevKey('.')
+      }
     }
   }
 
   const handleDigit = ({target}) => {
-    const newDigit = target.name
+    if (!errorMsg) {
+      const newDigit = target.name
 
-    if (!['=', 'MR', 'MS', 'hist', 'sqrtinv', 'percent'].includes(prevKey) 
-      && !operRegEx.test(prevKey)) {
-      // overwrite 0. otherwise, append
-      setLowerVal(prev => prev === '0' ? newDigit : prev + newDigit)
-    } else {
-      if (waitingForNewExpression)
-        setExpression([])
+      if (!['=', 'MR', 'MS', 'hist', 'sqrtinv', 'percent'].includes(prevKey) 
+        && !operRegEx.test(prevKey)) {
+        // overwrite 0. otherwise, append
+        setLowerVal(prev => prev === '0' ? newDigit : prev + newDigit)
+      } else {
+        if (waitingForNewExpression)
+          setExpression([])
 
-      // next input overwrites lowerVal
-      setLowerVal(newDigit)
+        // next input overwrites lowerVal
+        setLowerVal(newDigit)
+      }
+
+      setWaitingForNewExpression(false)
+      setPrevKey(newDigit)
     }
-
-    setWaitingForNewExpression(false)
-    setPrevKey(newDigit)
   }
 
   const handleOperator = ({target}) => {
-    const newOperator = target.name
-    let newExpression = expression
-    let newLowerVal = lowerVal
-    
-    if (operRegEx.test(prevKey)) {
-      // replace operator
-      newExpression = [...expression.slice(0,-1), newOperator]
-    } else if (['.', 'CE', 'toggleSign', 'MR', 'hist', 'paste', 'sqrtinv', 'percent']
-      .includes(prevKey)) {
-      // existing expression with last item as operator will append the lower value and the newOperator
-      // otherwise replace the expression with the evaluation and the newOperator
-      // remove dot
-      if (lowerVal.slice(-1)[0] === '.')
-        newLowerVal = lowerVal.slice(0,-1)
+    if (!errorMsg) {
+      const newOperator = target.name
+      let newExpression = expression
+      let newLowerVal = lowerVal
+      
+      if (operRegEx.test(prevKey)) {
+        // replace operator
+        newExpression = [...expression.slice(0,-1), newOperator]
+      } else if (['.', 'CE', 'toggleSign', 'MR', 'hist', 'paste', 'sqrtinv', 'percent']
+        .includes(prevKey)) {
+        // existing expression with last item as operator will append the lower value and the newOperator
+        // otherwise replace the expression with the evaluation and the newOperator
+        // remove dot
+        if (lowerVal.slice(-1)[0] === '.')
+          newLowerVal = lowerVal.slice(0,-1)
 
-      if (operRegEx.test(expression.slice(-1))) {
-        newExpression = [...expression, newLowerVal]
+        if (operRegEx.test(expression.slice(-1))) {
+          newExpression = [...expression, newLowerVal]
+        } else {
+          newExpression = [newLowerVal]
+        }
+
+        newLowerVal = myEval(newExpression)
+        newExpression = newExpression.concat(newOperator)
+      } else if (prevKey === '=') {
+        // append to existing expression
+        newLowerVal = myEval(expression)
+        newExpression = [newLowerVal, newOperator]
       } else {
-        newExpression = [newLowerVal]
+        // evaluate and display current expression with new operator
+        const oldExpression = [...expression, lowerVal]
+
+        newLowerVal = myEval(oldExpression)
+        newExpression = oldExpression.concat(newOperator)
       }
 
-      newLowerVal = myEval(newExpression)
-      newExpression = newExpression.concat(newOperator)
-    } else if (prevKey === '=') {
-      // append to existing expression
-      newLowerVal = myEval(expression)
-      newExpression = [newLowerVal, newOperator]
-    } else {
-      // evaluate and display current expression with new operator
-      const oldExpression = [...expression, lowerVal]
-
-      newLowerVal = myEval(oldExpression)
-      newExpression = oldExpression.concat(newOperator)
+      setWaitingForNewExpression(false)
+      setExpression(newExpression)
+      setLowerVal(newLowerVal)
+      setPrevKey(newOperator)
     }
-
-    setWaitingForNewExpression(false)
-    setExpression(newExpression)
-    setLowerVal(newLowerVal)
-    setPrevKey(newOperator)
   }
 
   // helper function. must pass an arr of strings. returns evaluation of the string
@@ -193,66 +209,68 @@ export default function Calculator() {
   }
 
   const handleEqual = () => {
-    let newExpression = expression
-    let newLowerVal = lowerVal
+    if (!errorMsg) {
+      let newExpression = expression
+      let newLowerVal = lowerVal
 
-    if (!operRegEx.test(expression)) {
-      if (prevKey !== '.') {
-        newExpression = [lowerVal]
-      } else {
-        // remove dot from expression and lowerVal
-        newExpression = [lowerVal.slice(0,-1)]
-        newLowerVal = lowerVal.slice(0,-1)
-      }
-    } else if (['.', 'CE', 'toggleSign', 'MR', 'hist', 'paste', 'sqrtinv', 'percent']
-      .includes(prevKey)) {
-      // existing expression with last item as operator will append the lowerVal to expression 
-      // otherwise repeat expression on the lowerVal
-      // remove dot
-      if (lowerVal.slice(-1)[0] === '.')
-        newLowerVal = lowerVal.slice(0,-1)
+      if (!operRegEx.test(expression)) {
+        if (prevKey !== '.') {
+          newExpression = [lowerVal]
+        } else {
+          // remove dot from expression and lowerVal
+          newExpression = [lowerVal.slice(0,-1)]
+          newLowerVal = lowerVal.slice(0,-1)
+        }
+      } else if (['.', 'CE', 'toggleSign', 'MR', 'hist', 'paste', 'sqrtinv', 'percent']
+        .includes(prevKey)) {
+        // existing expression with last item as operator will append the lowerVal to expression 
+        // otherwise repeat expression on the lowerVal
+        // remove dot
+        if (lowerVal.slice(-1)[0] === '.')
+          newLowerVal = lowerVal.slice(0,-1)
 
-      // was last item in expression was an operator?
-      if (operRegEx.test(expression.slice(-1))) {
-        newExpression = [...expression, newLowerVal]
-      } else {
-        // use last operator and operand on curr lowerVal
+        // was last item in expression was an operator?
+        if (operRegEx.test(expression.slice(-1))) {
+          newExpression = [...expression, newLowerVal]
+        } else {
+          // use last operator and operand on curr lowerVal
+          const [lastOperator, lastOperand] = expression.slice(-2)
+
+          newExpression = [newLowerVal, lastOperator, lastOperand]
+        }
+
+        newLowerVal = myEval(newExpression)
+      } else if (prevKey === '=') {
+        // repeat last operator and operand
         const [lastOperator, lastOperand] = expression.slice(-2)
 
-        newExpression = [newLowerVal, lastOperator, lastOperand]
+        newExpression = [lowerVal, lastOperator, lastOperand]
+        newLowerVal = myEval([...expression, lastOperator, lastOperand])
+      } else {
+        // just append
+        newExpression = [...expression, lowerVal]
+        newLowerVal = myEval(newExpression)
       }
 
-      newLowerVal = myEval(newExpression)
-    } else if (prevKey === '=') {
-      // repeat last operator and operand
-      const [lastOperator, lastOperand] = expression.slice(-2)
+      // state updates
+      let allEmptyHistories = history.filter(i => i[0] === ' ' && i[1] === ' ')
+      let newHistory = history
+      if (allEmptyHistories.length !== 0) {
+        // edit history directly when there exists empty expressions
+        newHistory[5 - allEmptyHistories.length] = [newExpression.join(''), newLowerVal]
+        setCursor(5 - allEmptyHistories.length)
+      } else {
+        newHistory = newHistory.concat([[newExpression.join(''), newLowerVal]])
+        setCursor(4)
+        setHistoryStart(getAllNonEmptyHistories().length - 4)
+      }
 
-      newExpression = [lowerVal, lastOperator, lastOperand]
-      newLowerVal = myEval([...expression, lastOperator, lastOperand])
-    } else {
-      // just append
-      newExpression = [...expression, lowerVal]
-      newLowerVal = myEval(newExpression)
+      setWaitingForNewExpression(true)
+      setHistory(newHistory)
+      setExpression(newExpression)
+      setLowerVal(newLowerVal)
+      setPrevKey('=')
     }
-
-    // state updates
-    let allEmptyHistories = history.filter(i => i[0] === ' ' && i[1] === ' ')
-    let newHistory = history
-    if (allEmptyHistories.length !== 0) {
-      // edit history directly when there exists empty expressions
-      newHistory[5 - allEmptyHistories.length] = [newExpression.join(''), newLowerVal]
-      setCursor(5 - allEmptyHistories.length)
-    } else {
-      newHistory = newHistory.concat([[newExpression.join(''), newLowerVal]])
-      setCursor(4)
-      setHistoryStart(getAllNonEmptyHistories().length - 4)
-    }
-
-    setWaitingForNewExpression(true)
-    setHistory(newHistory)
-    setExpression(newExpression)
-    setLowerVal(newLowerVal)
-    setPrevKey('=')
   }
 
   // returns list of all non empty entries in history
@@ -307,18 +325,20 @@ export default function Calculator() {
   })
 
   const handleHistory = (displayIndex) => () => {
-    if (history[displayIndex + historyStart][1] !== ' ' && cursor !== null) {
-      setLowerVal(history[displayIndex + historyStart][1])
-      if (prevKey === '=')
-        setWaitingForNewExpression(true)
-      setPrevKey('hist')
-      setToSelected(displayIndex)
-      setCursor(displayIndex)
+    if (!errorMsg) {
+      if (history[displayIndex + historyStart][1] !== ' ' && cursor !== null) {
+        setLowerVal(history[displayIndex + historyStart][1])
+        if (prevKey === '=')
+          setWaitingForNewExpression(true)
+        setPrevKey('hist')
+        setToSelected(displayIndex)
+        setCursor(displayIndex)
+      }
     }
   }
 
   const moveCursorUp = () => {
-    if (cursor !== null) {
+    if (!errorMsg && cursor !== null) {
       if (cursor === 0) {
         if (cursor + historyStart - 1 === -1) {
           setLowerVal(history[0][1])
@@ -339,7 +359,7 @@ export default function Calculator() {
   }
 
   const moveCursorDown = () => {
-    if (cursor !== null) {
+    if (!errorMsg && cursor !== null) {
       const nonEmptyHistory = getAllNonEmptyHistories()
 
       if (cursor + historyStart === nonEmptyHistory.length - 1) {
