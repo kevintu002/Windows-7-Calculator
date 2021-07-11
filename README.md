@@ -2,7 +2,7 @@
 
 ## What is this?
 
-This project is my replication for the Windows 7 Calculator.
+A Windows 7 Calculator replica.
 
 ## Where is it?
 
