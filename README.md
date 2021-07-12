@@ -8,11 +8,11 @@ A Windows 7 Calculator replica.
 
 [Link to calculator](https://poplica.github.io/Windows-7-Calculator/)
 
-![Broken image link](https://i.imgur.com/YQGgCjN.png)
+![Broken image link](https://i.imgur.com/dgIceBS.png)
 
 Original Win7 Calculator
 
-![Broken image link](https://i.imgur.com/VpwQeL4.png)
+![Broken image link](https://i.imgur.com/skpiDst.png)
 
 ## Why did I make this?
 
