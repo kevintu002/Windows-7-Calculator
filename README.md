@@ -8,7 +8,7 @@ A Windows 7 Calculator replica.
 
 [Link to calculator](https://poplica.github.io/Windows-7-Calculator/)
 
-![Broken image link](https://i.imgur.com/dgIceBS.png)
+![Broken image link](https://i.imgur.com/Cuql4z4.png)
 
 Original Win7 Calculator
 
