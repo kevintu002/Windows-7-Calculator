@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import Calculator from '../Calculator';
+import Calculator from '../components/Calculator';
 
 function getButton(val) {
   return screen.getByRole('button', {name: val})
@@ -10,7 +10,6 @@ function clickButton(val) {
 }
 
 function clickSeriesOfButtons(str, clearBeforeSeries=true) {
-  // C before executing
   if (clearBeforeSeries) {
     clickButton('C')
     clickButton('MC')

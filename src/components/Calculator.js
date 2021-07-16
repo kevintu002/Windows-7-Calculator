@@ -16,16 +16,25 @@ export default function Calculator() {
   const [prevKey, setPrevKey] = useState(null)
   const [historyStart, setHistoryStart] = useState(0)
   const operRegEx = new RegExp('\\+|-|\\*|\\/')
+  const helpURL = 'https://github.com/Poplica/react-calculator/blob/master/README.md'
 
   useEffect(() => {
-    if (['Infinity', 'NaN'].includes(lowerVal))
+    if (['Infinity', 'NaN'].includes(lowerVal)) {
       setErrorMsg('Cannot divide by zero')
-    else if (lowerVal.includes('i'))
+    } else if (lowerVal.includes('i')) {
       setErrorMsg('Cannot sqrt negative')
+    }
 
-    if (lowerVal.length > 12)
+    if (lowerVal.length > 12) {
       document.getElementById('lowerVal').style.fontSize = '16px'
+    }
   }, [lowerVal])
+
+  useEffect(() => {
+    if (errorMsg) {
+      setLowerVal('')
+    }
+  }, [errorMsg])
 
   const handleMClear = () => {
     setMem('0')
@@ -41,8 +50,9 @@ export default function Calculator() {
   const handleMStore = () => {
     if (!errorMsg) {
       setMem(lowerVal)
-      if (!isNaN(prevKey))
+      if (!isNaN(prevKey)) {
         setPrevKey('MS')
+      }
     }
   }
 
@@ -94,7 +104,6 @@ export default function Calculator() {
     if (!errorMsg) {
       setLowerVal(prev => inv(prev) + '')
 
-      // sqrt and inverse interactions are the same
       setPrevKey('sqrtinv')
     }
   }
@@ -108,7 +117,6 @@ export default function Calculator() {
           setLowerVal(prev => (myEval(expression) * prev / 100) + '')
         }
       } else {
-        // expressions without an operator is always 0
         setLowerVal('0')
       }
 
@@ -117,28 +125,25 @@ export default function Calculator() {
   }
 
   const handleDelete = () => {
-    if (!errorMsg) {
-      if (prevKey !== '=' && lowerVal !== '0') {
-        setLowerVal(prev => prev.length === 1 ? '0' : prev.slice(0, -1))
+    if (!errorMsg && prevKey !== '=' && lowerVal !== '0') {
+      setLowerVal(prev => prev.length === 1 ? '0' : prev.slice(0, -1))
 
-        setPrevKey('del')
-      }
+      setPrevKey('del')
     }
   }
 
   const handleDot = () => {
-    if (!errorMsg) {
-      if (!lowerVal.includes('.')) {
-        if (prevKey === '=' || operRegEx.test(prevKey) 
-        || (expression.length === 0 && lowerVal === '0'))
+    if (!errorMsg && !lowerVal.includes('.')) {
+      if (prevKey === '=' || operRegEx.test(prevKey) 
+        || (expression.length === 0 && lowerVal === '0')) {
         // prepend 0 under special cases
-          setLowerVal('0.')
-        else
-          setLowerVal(prev => prev + '.')
-        
-        setWaitingForNewExpression(false)
-        setPrevKey('.')
+        setLowerVal('0.')
+      } else {
+        setLowerVal(prev => prev + '.')
       }
+      
+      setWaitingForNewExpression(false)
+      setPrevKey('.')
     }
   }
 
@@ -148,13 +153,12 @@ export default function Calculator() {
 
       if (!['=', 'MR', 'MS', 'hist', 'sqrtinv', 'percent'].includes(prevKey) 
         && !operRegEx.test(prevKey)) {
-        // overwrite 0. otherwise, append
         setLowerVal(prev => prev === '0' ? newDigit : prev + newDigit)
       } else {
-        if (waitingForNewExpression)
+        if (waitingForNewExpression) {
           setExpression([])
+        }
 
-        // next input overwrites lowerVal
         setLowerVal(newDigit)
       }
 
@@ -170,15 +174,14 @@ export default function Calculator() {
       let newLowerVal = lowerVal
       
       if (operRegEx.test(prevKey)) {
-        // replace operator
         newExpression = [...expression.slice(0,-1), newOperator]
       } else if (['.', 'CE', 'toggleSign', 'MR', 'hist', 'paste', 'sqrtinv', 'percent']
         .includes(prevKey)) {
         // existing expression with last item as operator will append the lower value and the newOperator
-        // otherwise replace the expression with the evaluation and the newOperator
-        // remove dot
-        if (lowerVal.slice(-1)[0] === '.')
+        // otherwise replace the expression with the evaluation and the newOperator 
+        if (lowerVal.slice(-1)[0] === '.') {
           newLowerVal = lowerVal.slice(0,-1)
+        }
 
         if (operRegEx.test(expression.slice(-1))) {
           newExpression = [...expression, newLowerVal]
@@ -221,7 +224,6 @@ export default function Calculator() {
         if (prevKey !== '.') {
           newExpression = [lowerVal]
         } else {
-          // remove dot from expression and lowerVal
           newExpression = [lowerVal.slice(0,-1)]
           newLowerVal = lowerVal.slice(0,-1)
         }
@@ -229,11 +231,10 @@ export default function Calculator() {
         .includes(prevKey)) {
         // existing expression with last item as operator will append the lowerVal to expression 
         // otherwise repeat expression on the lowerVal
-        // remove dot
-        if (lowerVal.slice(-1)[0] === '.')
+        if (lowerVal.slice(-1)[0] === '.') {
           newLowerVal = lowerVal.slice(0,-1)
+        }
 
-        // was last item in expression was an operator?
         if (operRegEx.test(expression.slice(-1))) {
           newExpression = [...expression, newLowerVal]
         } else {
@@ -251,13 +252,11 @@ export default function Calculator() {
         newExpression = [lowerVal, lastOperator, lastOperand]
         newLowerVal = myEval([...expression, lastOperator, lastOperand])
       } else {
-        // just append
         newExpression = [...expression, lowerVal]
         newLowerVal = myEval(newExpression)
       }
 
-      // state updates
-      let allEmptyHistories = history.filter(i => i[0] === ' ' && i[1] === ' ')
+      let allEmptyHistories = history.filter(ii => ii[0] === ' ' && ii[1] === ' ')
       let newHistory = history
       if (allEmptyHistories.length !== 0) {
         // edit history directly when there exists empty expressions
@@ -279,21 +278,23 @@ export default function Calculator() {
 
   // returns list of all non empty entries in history
   const getAllNonEmptyHistories = () => {
-    return history.filter(i => i[0] !== ' ' && i[1] !== ' ')
+    return history.filter(ii => ii[0] !== ' ' && ii[1] !== ' ')
   }
 
   // sets background color of history display index to color
   const setHistoryBGColorOf = (index, color) => {
     const historyPointer = document.getElementsByClassName('history')[index]
-    if (historyPointer)
+    if (historyPointer) {
       historyPointer.style.backgroundColor = color
+    }
   }
 
   // sets font color of history display index to color
   const setHistoryIndexColor = (index, color) => {
     const historyPointer = document.getElementsByClassName('history')[index]
-    if (historyPointer)
+    if (historyPointer) {
       historyPointer.style.color = color
+    }
   }
 
   // sets index to selected style
@@ -316,28 +317,30 @@ export default function Calculator() {
       setHistoryBGColorOf(cursor, 'lightblue')
     }
 
-    if (prevKey === 'hist')
+    if (prevKey === 'hist') {
       setToSelected(cursor)
-    if (prevKey === '=')
+    }
+    if (prevKey === '=') {
       setHistoryBGColorOf(cursor, 'lightblue')
+    }
 
     return () => {
-      if (cursor !== null)
+      if (cursor !== null) {
         // sets previous cursor's style to default
         setToUnselected(cursor)
+      }
     }
   })
 
   const handleHistory = (displayIndex) => () => {
-    if (!errorMsg) {
-      if (history[displayIndex + historyStart][1] !== ' ' && cursor !== null) {
-        setLowerVal(history[displayIndex + historyStart][1])
-        if (prevKey === '=')
-          setWaitingForNewExpression(true)
-        setPrevKey('hist')
-        setToSelected(displayIndex)
-        setCursor(displayIndex)
+    if (!errorMsg && history[displayIndex + historyStart][1] !== ' ' && cursor !== null) {
+      if (prevKey === '=') {
+        setWaitingForNewExpression(true)
       }
+      setLowerVal(history[displayIndex + historyStart][1])
+      setPrevKey('hist')
+      setToSelected(displayIndex)
+      setCursor(displayIndex)
     }
   }
 
@@ -356,8 +359,9 @@ export default function Calculator() {
         handleHistory(cursor - 1)()
       }
 
-      if (prevKey === '=')
+      if (prevKey === '=') {
         setWaitingForNewExpression(true)
+      }
       setPrevKey('hist')
     }
   }
@@ -376,15 +380,15 @@ export default function Calculator() {
         handleHistory(cursor + 1)()
       }
 
-      if (prevKey === '=')
+      if (prevKey === '=') {
         setWaitingForNewExpression(true)
+      }
       setPrevKey('hist')
     }
   }
 
   const handleKeyPress = (e) => {
     const key = e.key
-    // console.log(key)
     const ctrlKeyMap = {
       q: 'M-',
       p: 'M+',
@@ -414,7 +418,6 @@ export default function Calculator() {
     }
     try {
       if (e.ctrlKey && key in ctrlKeyMap) {
-        // ctrl key modifier
         if (key === 'c') {
           navigator.clipboard.writeText(lowerVal)
         } else if (key === 'v') {
@@ -425,21 +428,18 @@ export default function Calculator() {
           document.getElementById(ctrlKeyMap[key]).click()
         }
       } else if (e.shiftKey && key in shiftKeyMap) {
-        // shift key modifier
         document.getElementById(shiftKeyMap[key]).click()
       } else if (key === 'F1') {
-        window.open('https://github.com/Poplica/react-calculator/blob/master/README.md', '_blank')
+        window.open(helpURL, '_blank')
       } else if (key in keyMap) {
         document.getElementById(keyMap[key]).click()
       } else {
         document.getElementById(key).click()
       }
     } catch (error) {
-      // unmapped inputs do nothing
       // console.log(error)
     }
 
-    // removes button focus
     e.target.blur()
   }
 
@@ -456,13 +456,13 @@ export default function Calculator() {
         <a 
           target="_blank"
           name="help"
-          href="https://github.com/Poplica/react-calculator/blob/master/README.md"
+          href={helpURL}
           rel="noopener noreferrer"
         >Help</a>
       </div>
 
       <div className="display">
-        <div className="navigation">
+        <div className=" outer-div navigation">
           <CalcKey id="up" name="&#x25B2;" onClick={moveCursorUp}/>
           <CalcKey id="down" name="&#x25BC;" onClick={moveCursorDown}/>
         </div>
@@ -473,8 +473,9 @@ export default function Calculator() {
               className="history" 
               onClick={handleHistory(index)}
               style={{
-                // all border-bottom should be 1px dotted except for the last one and blank expressions
-                borderBottom: i[1] !== ' ' && i[0] !== ' ' && index !== 4 ? '1px dotted black': '1px solid transparent'
+                borderBottom: i[1] !== ' ' && i[0] !== ' ' && index !== 4 
+                  ? '1px dotted black'
+                  : '1px solid transparent'
               }}
             >{i[0]}</div>
           )}

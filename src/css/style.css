@@ -25,7 +25,7 @@ a {
 
 .navigation {
   width: 100%;
-  margin: 0 3px 3px 0;
+  margin: 3px;
   border-bottom: 1px solid lightgray;
 }
 #up, #down {
@@ -49,10 +49,9 @@ a {
 }
 
 .outer-div {
-  width:92%;
+  width: 92%;
   margin-left: auto;
   margin-right: auto;
-  text-align: right;
   
   overflow: hidden;
   white-space: nowrap;
@@ -66,9 +65,6 @@ a {
   font-size: 11px;
   letter-spacing: 1px;
   height: 15px;
-  text-align: right;
-  white-space: nowrap;
-  word-wrap: break-word;
 }
 
 #memory {
