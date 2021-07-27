@@ -87,14 +87,14 @@ export default function Calculator() {
 
   const handleToggleSign = () => {
     if (!errorMsg) {
-      setLowerVal(prev => (prev * -1) + '')
+      setLowerVal(prev => `${Number(prev) * -1}`)
       setPrevKey('toggleSign')
     }
   }
 
   const handleSqrt = () => {
     if (!errorMsg) {
-      setLowerVal(prev => sqrt(prev) + '')
+      setLowerVal(prev => `${sqrt(Number(prev))}`)
       
       setPrevKey('sqrtinv')
     }
@@ -102,7 +102,7 @@ export default function Calculator() {
 
   const handleInverse = () => {
     if (!errorMsg) {
-      setLowerVal(prev => inv(prev) + '')
+      setLowerVal(prev => `${inv(Number(prev))}`)
 
       setPrevKey('sqrtinv')
     }
@@ -111,10 +111,10 @@ export default function Calculator() {
   const handlePercent = () => {
     if (!errorMsg) {
       if (expression.length > 1) {
-        if (operRegEx.test(expression.slice(-1))) {
-          setLowerVal(prev => (myEval(expression.slice(0, -1)) * prev / 100) + '')
+        if (operRegEx.test(expression.slice(-1).toString())) {
+          setLowerVal(prev => `${Number(myEval(expression.slice(0, -1))) * Number(prev) / 100}`)
         } else {
-          setLowerVal(prev => (myEval(expression) * prev / 100) + '')
+          setLowerVal(prev => `${Number(myEval(expression)) * Number(prev) / 100}`)
         }
       } else {
         setLowerVal('0')
@@ -183,7 +183,7 @@ export default function Calculator() {
           newLowerVal = lowerVal.slice(0,-1)
         }
 
-        if (operRegEx.test(expression.slice(-1))) {
+        if (operRegEx.test(expression.slice(-1).toString())) {
           newExpression = [...expression, newLowerVal]
         } else {
           newExpression = [newLowerVal]
@@ -220,7 +220,7 @@ export default function Calculator() {
       let newExpression = expression
       let newLowerVal = lowerVal
 
-      if (!operRegEx.test(expression)) {
+      if (!operRegEx.test(expression.toString())) {
         if (prevKey !== '.') {
           newExpression = [lowerVal]
         } else {
@@ -235,7 +235,7 @@ export default function Calculator() {
           newLowerVal = lowerVal.slice(0,-1)
         }
 
-        if (operRegEx.test(expression.slice(-1))) {
+        if (operRegEx.test(expression.slice(-1).toString())) {
           newExpression = [...expression, newLowerVal]
         } else {
           // use last operator and operand on curr lowerVal
@@ -284,7 +284,7 @@ export default function Calculator() {
   // sets background color of history display index to color
   const setHistoryBGColorOf = (index, color) => {
     const historyPointer = document.getElementsByClassName('history')[index]
-    if (historyPointer) {
+    if (historyPointer && historyPointer instanceof HTMLElement) {
       historyPointer.style.backgroundColor = color
     }
   }
@@ -292,7 +292,7 @@ export default function Calculator() {
   // sets font color of history display index to color
   const setHistoryIndexColor = (index, color) => {
     const historyPointer = document.getElementsByClassName('history')[index]
-    if (historyPointer) {
+    if (historyPointer && historyPointer instanceof HTMLElement) {
       historyPointer.style.color = color
     }
   }
@@ -302,13 +302,7 @@ export default function Calculator() {
     setHistoryIndexColor(index, 'white')
     setHistoryBGColorOf(index, 'rgb(102, 132, 146)')
   }
-
-  // sets index to default style
-  const setToUnselected = (index) => {
-    setHistoryIndexColor(index, 'black')
-    setHistoryBGColorOf(index, 'transparent')
-  }
-
+  
   // any key press after history has been selected should modify cursor style
   useEffect(() => {
     if (!['hist', '='].includes(prevKey)) {
@@ -327,7 +321,8 @@ export default function Calculator() {
     return () => {
       if (cursor !== null) {
         // sets previous cursor's style to default
-        setToUnselected(cursor)
+        setHistoryIndexColor(cursor, 'black')
+        setHistoryBGColorOf(cursor, 'transparent')
       }
     }
   })
@@ -421,7 +416,11 @@ export default function Calculator() {
         if (key === 'c') {
           navigator.clipboard.writeText(lowerVal)
         } else if (key === 'v') {
-          navigator.clipboard.readText().then(text => setLowerVal(!isNaN(text) ? text : '0'))
+          navigator.clipboard.readText().then(text => 
+            setLowerVal(!isNaN(Number(text)) 
+              ? text 
+              : '0'
+          ))
 
           setPrevKey('paste')
         } else {
@@ -455,7 +454,6 @@ export default function Calculator() {
       <div className="menu">
         <a 
           target="_blank"
-          name="help"
           href={helpURL}
           rel="noopener noreferrer"
         >Help</a>
