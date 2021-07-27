@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/Windows-7-Calculator/static/css/main.7aae1e56.chunk.css",
-    "main.js": "/Windows-7-Calculator/static/js/main.e991a648.chunk.js",
-    "main.js.map": "/Windows-7-Calculator/static/js/main.e991a648.chunk.js.map",
+    "main.js": "/Windows-7-Calculator/static/js/main.b0a7aae1.chunk.js",
+    "main.js.map": "/Windows-7-Calculator/static/js/main.b0a7aae1.chunk.js.map",
     "runtime-main.js": "/Windows-7-Calculator/static/js/runtime-main.5e314431.js",
     "runtime-main.js.map": "/Windows-7-Calculator/static/js/runtime-main.5e314431.js.map",
     "static/js/2.15ae4ca7.chunk.js": "/Windows-7-Calculator/static/js/2.15ae4ca7.chunk.js",
@@ -16,6 +16,6 @@
     "static/js/runtime-main.5e314431.js",
     "static/js/2.15ae4ca7.chunk.js",
     "static/css/main.7aae1e56.chunk.css",
-    "static/js/main.e991a648.chunk.js"
+    "static/js/main.b0a7aae1.chunk.js"
   ]
 }
