@@ -6,7 +6,7 @@ A Windows 7 Calculator replica.
 
 ## Where is it?
 
-[Link to calculator](https://poplica.github.io/Windows-7-Calculator/)
+[Link to calculator](https://kevintu002.github.io/Windows-7-Calculator/)
 
 ![Broken image link](https://i.imgur.com/Cuql4z4.png)
 
